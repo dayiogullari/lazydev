@@ -1,0 +1,8 @@
+node_modules
+cosmwasm/target
+cosmwasm/artifacts
+result
+target
+*.wasm
+rustc-ice-*
+.DS_Store

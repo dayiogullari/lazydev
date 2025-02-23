@@ -1,0 +1,13 @@
+[formatting]
+reorder_keys        = false
+align_entries       = true
+inline_table_expand = false
+
+[[rule]]
+include = ["**/Cargo.toml"]
+keys    = ["dependencies"]
+
+[rule.formatting]
+reorder_keys        = true
+align_entries       = true
+inline_table_expand = false

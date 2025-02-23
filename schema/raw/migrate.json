@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "MigrateMsg",
+	"description": "The migration message for lazydev.\n\nThis is empty since no migrations are currently supported or required.",
+	"type": "object",
+	"additionalProperties": false
+}

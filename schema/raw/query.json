@@ -1,0 +1,99 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "QueryMsg",
+	"oneOf": [
+		{
+			"description": "Returns the linked account of a github user, or [`None`] if the user has not yet been linked.",
+			"type": "object",
+			"required": ["linked_address"],
+			"properties": {
+				"linked_address": {
+					"type": "object",
+					"required": ["github_user_id"],
+					"properties": {
+						"github_user_id": {
+							"type": "integer",
+							"format": "uint64",
+							"minimum": 0.0
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		{
+			"description": "Returns all of the configured repos.",
+			"type": "object",
+			"required": ["repos"],
+			"properties": {
+				"repos": {
+					"type": "object",
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		{
+			"description": "Returns all of the configured repos.",
+			"type": "object",
+			"required": ["repo_config"],
+			"properties": {
+				"repo_config": {
+					"type": "object",
+					"required": ["repo"],
+					"properties": {
+						"repo": {
+							"$ref": "#/definitions/Repo"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		{
+			"description": "Returns whether a PR is eligible for rewards.",
+			"type": "object",
+			"required": ["query_pr_eligibility"],
+			"properties": {
+				"query_pr_eligibility": {
+					"type": "object",
+					"required": ["github_user_id", "pr_id", "repo"],
+					"properties": {
+						"github_user_id": {
+							"type": "integer",
+							"format": "uint64",
+							"minimum": 0.0
+						},
+						"pr_id": {
+							"type": "integer",
+							"format": "uint64",
+							"minimum": 0.0
+						},
+						"repo": {
+							"$ref": "#/definitions/Repo"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		}
+	],
+	"definitions": {
+		"Repo": {
+			"type": "object",
+			"required": ["org", "repo"],
+			"properties": {
+				"org": {
+					"type": "string"
+				},
+				"repo": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		}
+	}
+}
