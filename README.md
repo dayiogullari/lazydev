@@ -1,8 +1,8 @@
-# Lazydev
+# LazyDev_
 
 > Rewarding developers for contributions
 
-Lazydev is a platform for open source projects to verifiably reward and incentivize contributors.
+LazyDev_ is a platform for open source projects to verifiably reward and incentivize contributors.
 
 Since the dawn of the open source revolution, developers have been thanklessly contributing to projects without the expectation of renumeration. While the ethos of open source is strong, it can also be frustrating as these contributors need income to sustain themselves. As a result, many are forced to pursue their open source passions as hobbies rather than full-time jobs.
 
@@ -15,7 +15,7 @@ Using GitHub REST data on-chain presents a challenge: how can one ensure that re
 
 ## GitHub
 
-We use several github rest api endpoints for lazydev.
+We use several GitHub REST API endpoints for LazyDev_.
 
 ### User
 
@@ -33,7 +33,7 @@ To prove a pull request has been completed, we use the [get a pull request] endp
 
 > `/repos/${repoOwner}/${repo}/collaborators/${githubUsername}/permission`
 
-To prove a user is an admin in a repository (and therefore is able to set up the repo in lazydev), we use the [get repository permissions for a user] endpoint. This is combined with the [#user] proof, which ensures that the submitting user is also the owner of the account with admin permissions.
+To prove a user is an admin in a repository (and therefore is able to set up the repo in LazyDev_), we use the [get repository permissions for a user] endpoint. This is combined with the [user](#user) proof, which ensures that the submitting user is also the owner of the account with admin permissions.
 
 ## Commit/Reveal Scheme
 
@@ -48,15 +48,14 @@ To prevent this from happening, we use a two-step commit/reveal scheme inspired 
 
 A secret is generated client side, and then the sha256 sum of this secret is committed as the key to the (key, value) tuple that will later be sent with a valid proof. Once this is committed on chain, the off-chain client can then read the commitment and ensure that it was indeed committed as expected (i.e. that it was not frontrun), and then submit a second transaction which itself contains the the `zkTLS` proof, along with the raw secret. Since only one commitement can be submitted per key, it is not possible for this proof to be frontrun.
 
-:::note
-This commit/reveal scheme is vulnerable to spam, where a malicious user could repeatedly "claim" a key by submitting a garbage commitment with the key. A potential mitigation for this could be to require a certain amount of funds to be locked on commit, with the funds only being returned on successful claim of that commit. (This could also be an additional revenue stream for lazydev, where we take a fee from each commit.)
-:::
+> [!NOTE]
+> This commit/reveal scheme is vulnerable to spam, where a malicious user could repeatedly "claim" a key by submitting a garbage commitment with the key. A potential mitigation for this could be to require a certain amount of funds to be locked on commit, with the funds only being returned on successful claim of that commit. (This could also be an additional revenue stream for LazyDev__, where we take a fee from each commit.)
 
 ## Useful Links
 
 - Reclaim verifier contract on neutron: <https://docs.reclaimprotocol.org/sdk/cosmos/neutron#copy-this-to-neutronfunctionsjs>
-- Lazydev contract address: <https://neutron.celat.one/pion-1/contracts/neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86>
-- Lazydev Token Reward code id: <https://neutron.celat.one/pion-1/codes/10893>
+- LazyDev_ contract address: <https://neutron.celat.one/pion-1/contracts/neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86>
+- LazyDev_ Token Reward code id: <https://neutron.celat.one/pion-1/codes/10893>
 - `cw20-base` code id: <https://neutron.celat.one/pion-1/codes/10880>
 
 [get a pull request]: https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#get-a-pull-request
