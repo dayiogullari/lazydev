@@ -19,7 +19,7 @@ interface ClaimRewardParams {
 	setTxHashes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	setClaimedPrs: React.Dispatch<React.SetStateAction<Set<string>>>;
 	setInvalidRepos: React.Dispatch<React.SetStateAction<Set<string>>>;
-
+	setSuccessfullClaim: React.Dispatch<React.SetStateAction<boolean>>;
 	contribution: Contribution;
 
 	contractAddress: string;
@@ -35,6 +35,7 @@ export async function claimReward({
 	contribution,
 	contractAddress,
 	rpcUrl,
+	setSuccessfullClaim,
 }: ClaimRewardParams) {
 	if (!keplrWalletAddress) {
 		toast.error("Connect Wallet first");
@@ -43,19 +44,16 @@ export async function claimReward({
 
 	try {
 		setClaimingPrUrl(contribution.prUrl);
-
 		const prUrlRegex = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)$/;
 		const match = contribution.prUrl.match(prUrlRegex);
-
 		if (!match) {
 			throw new Error(
 				"Invalid GitHub PR URL. Must be a pull request link like https://github.com/org/repo/pull/123",
 			);
 		}
 
-		const [org, repo, pullId] = match;
+		const [, org, repo, pullId] = match;
 		const requestBody = { org, repo, pullId };
-
 		const proofResponse = await fetch("http://35.159.105.116:8080/proof-pr", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -96,6 +94,7 @@ export async function claimReward({
 		}));
 
 		setClaimedPrs((prev) => new Set([...prev, contribution.prUrl]));
+		setSuccessfullClaim(true);
 		toast.success("Reward claimed successfully!");
 	} catch (error) {
 		const errorMessage =

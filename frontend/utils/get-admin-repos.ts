@@ -15,7 +15,7 @@ export async function getAdminRepos(accessToken: string) {
 		const response = await fetch(`https://api.github.com/user/repos`, {
 			headers: {
 				Accept: "application/vnd.github.v3+json",
-				Authorization: `Bearer ${accessToken}`,
+				Authorization: `token ${accessToken}`,
 			},
 		});
 

@@ -43,8 +43,6 @@ export async function handleConnectWallet({
 		setIsLoading(true);
 		connectKeplrWallet();
 
-		console.log("is linked", isLinked);
-
 		toast.success("Wallet connected successfully!");
 		if (!isLinked) {
 			setCurrentStep("commit");

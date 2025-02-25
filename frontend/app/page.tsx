@@ -5,15 +5,15 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
-import ChallengesTab from "@/components/ChallengesTab";
-import LazydevInteraction from "@/components/lazyDevFlow/LazydevInteraction";
-import { NavBar } from "@/components/ui/NavBar";
-import { DashboardTab } from "@/components/dashboard/DashboardTab";
-import { LeaderboardTab } from "@/components/dashboard/LeaderboardTab";
-import AchievementsTab from "@/components/AchievmentsTab";
-import { ProfileTab } from "@/components/profile/ProfileTab";
-import { Footer } from "@/components/ui/Footer";
-import { ManageReposTab } from "@/components/manageRepos/manageRepos";
+import ChallengesTab from "@/components/challenges-tap";
+import LazydevInteraction from "@/components/lazyDevFlow/lazy-dev-interaction";
+import { NavBar } from "@/components/ui/navbar";
+import { DashboardTab } from "@/components/dashboard/dashboard-tab";
+import { LeaderboardTab } from "@/components/dashboard/leaderboard-tab";
+import AchievementsTab from "@/components/achievments-tab";
+import { ProfileTab } from "@/components/profile/profile-tab";
+import { Footer } from "@/components/ui/footer";
+import { ManageReposTab } from "@/components/manageRepos/manage-repos";
 import { getGithubContributions } from "@/utils/github-contributions";
 
 interface Contribution {
@@ -33,7 +33,6 @@ export default function Home() {
 	const [error, setError] = useState<string | null>(null);
 	const [activeTab, setActiveTab] = useState("dashboard");
 	const [totalCoins, setTotalCoins] = useState(0);
-
 	const mockLeaderboard = [
 		{
 			rank: 1,
@@ -59,7 +58,7 @@ export default function Home() {
 	];
 
 	useEffect(() => {
-		if (status === "authenticated" && session?.user?.email) {
+		if (status === "authenticated") {
 			fetchContributions();
 		}
 	}, [status, session?.user?.email]);
@@ -74,7 +73,6 @@ export default function Home() {
 
 	const fetchContributions = async () => {
 		if (!session?.user?.githubUsername || !session?.accessToken) return;
-
 		setLoadingContributions(true);
 		setError(null);
 
@@ -150,7 +148,6 @@ export default function Home() {
 					</div>
 				))}
 			</main>
-
 			<Footer />
 		</div>
 	);

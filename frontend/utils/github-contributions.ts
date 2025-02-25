@@ -16,7 +16,6 @@ export async function getGithubContributions(username: string) {
 			"https://rpc.pion.rs-testnet.polypore.xyz",
 			"neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86",
 		);
-
 		const repoQueryString = repos
 			.map(({ org, repo }) => `repo:${org}/${repo}`)
 			.join("+");
@@ -24,7 +23,6 @@ export async function getGithubContributions(username: string) {
 		const response = await fetch(
 			`https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`,
 		);
-
 		if (!response.ok) {
 			throw new Error(`GitHub API error: ${response.status}`);
 		}

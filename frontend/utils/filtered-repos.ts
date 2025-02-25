@@ -9,6 +9,5 @@ export async function FilteredRepos(
 	const client = await CosmWasmClient.connect(rpcUrl);
 
 	const repos = await new LazydevQueryClient(client, contractAddress).repos();
-	console.log(repos);
 	return repos;
 }
