@@ -6,7 +6,7 @@ LazyDev_ is a platform for open source projects to verifiably reward and incenti
 
 Since the dawn of the open source revolution, developers have been thanklessly contributing to projects without the expectation of renumeration. While the ethos of open source is strong, it can also be frustrating as these contributors need income to sustain themselves. As a result, many are forced to pursue their open source passions as hobbies rather than full-time jobs.
 
- Although many projects are willing to fund their supporters, there is no platform to automate the rewarding process while also incentivizing the contributions. 
+Although many projects are willing to fund their supporters, there is no platform to automate the rewarding process while also incentivizing the contributions. 
 
 This platform should be transparent, verifiable, and permissionless. With LazyDev_, project owners can register their repositories with fully customizable rewards, such as tokens, NFTs, and other assets, linked to the labels on the pull requests. Users are then able verify their contributions on-chain and automatically receive their rewards.  
 
@@ -49,7 +49,7 @@ To prevent this from happening, we use a two-step commit/reveal scheme inspired 
 A secret is generated client side, and then the sha256 sum of this secret is committed as the key to the (key, value) tuple that will later be sent with a valid proof. Once this is committed on chain, the off-chain client can then read the commitment and ensure that it was indeed committed as expected (i.e. that it was not frontrun), and then submit a second transaction which itself contains the the `zkTLS` proof, along with the raw secret. Since only one commitement can be submitted per key, it is not possible for this proof to be frontrun.
 
 > [!NOTE]
-> This commit/reveal scheme is vulnerable to spam, where a malicious user could repeatedly "claim" a key by submitting a garbage commitment with the key. A potential mitigation for this could be to require a certain amount of funds to be locked on commit, with the funds only being returned on successful claim of that commit. (This could also be an additional revenue stream for LazyDev__, where we take a fee from each commit.)
+> This commit/reveal scheme is vulnerable to spam, where a malicious user could repeatedly "claim" a key by submitting a garbage commitment with the key. A potential mitigation for this could be to require a certain amount of funds to be locked on commit, with the funds only being returned on successful claim of that commit. (This could also be an additional revenue stream for LazyDev_, where we take a fee from each commit.)
 
 ## Useful Links
 
