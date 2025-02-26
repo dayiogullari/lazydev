@@ -170,7 +170,7 @@ app.post("/proof-repo-owner", async (req, res) => {
     return res.status(400).json({ message: "bad_request" });
 
   //configuring the zkTLS proof request.
-  const url = `https://api.github.com/repos/${repoOwner}/${repo}/collaborators/${githubUsername}/permission`;
+  const url = `https://api.github.com/repos/${repoOwner}/${repo}`;
   const publicOptions = {
     method: "GET",
     Accept: "application/vnd.github.v3+json",
