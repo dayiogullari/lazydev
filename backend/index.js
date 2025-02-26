@@ -142,12 +142,10 @@ app.post("/proof-pr", async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message == 'Provider returned error 403"') {
-      return res
-        .status(403)
-        .json({
-          message: "forbidden",
-          error_description: "this user doesnt have access to the repo, they are not the owner",
-        });
+      return res.status(403).json({
+        message: "forbidden",
+        error_description: "this user doesnt have access to the repo, they are not the owner",
+      });
     }
     if (error.message == 'Provider returned error 404"') {
       return res
@@ -215,12 +213,10 @@ app.post("/proof-repo-owner", async (req, res) => {
         .json({ message: "not_authorized", error_description: "bad token credentials" });
     }
     if (error.message == 'Provider returned error 403"') {
-      return res
-        .status(403)
-        .json({
-          message: "forbidden",
-          error_description: "this user doesnt have access to the repo, they are not the owner",
-        });
+      return res.status(403).json({
+        message: "forbidden",
+        error_description: "this user doesnt have access to the repo, they are not the owner",
+      });
     }
     if (error.message == 'Provider returned error 404"') {
       return res
