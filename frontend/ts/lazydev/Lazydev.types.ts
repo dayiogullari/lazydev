@@ -6,106 +6,43 @@
 
 export type Addr = string;
 export interface InstantiateMsg {
-  commitment_delay_max_height: number;
-  commitment_delay_min_height: number;
-  verifier_address: Addr;
+  config: Config;
+  lazydev_address: Addr;
 }
-export type ExecuteMsg =
-  | {
-      commit_account: CommitAccountMsg;
-    }
-  | {
-      link_account: LinkAccountMsg;
-    }
-  | {
-      reward_pr: RewardPrMsg;
-    }
-  | {
-      commit_repo: CommitRepoMsg;
-    }
-  | {
-      link_repo: LinkRepoMsg;
-    };
-export type Binary = string;
-export interface CommitAccountMsg {
-  commitment_key: Binary;
-  github_user_id: number;
-  recipient_address: Addr;
-}
-export interface LinkAccountMsg {
-  proof: Proof;
-  recipient_address: Addr;
-  secret: Binary;
-}
-export interface Proof {
-  claimInfo: ClaimInfo;
-  signedClaim: SignedClaim;
-}
-export interface ClaimInfo {
-  context: string;
-  parameters: string;
-  provider: string;
-}
-export interface SignedClaim {
-  claim: CompleteClaimData;
-  signatures: string[];
-}
-export interface CompleteClaimData {
-  epoch: number;
-  identifier: string;
-  owner: string;
-  timestampS: number;
-}
-export interface RewardPrMsg {
-  proof: Proof;
-}
-export interface CommitRepoMsg {
-  commitment_key: Binary;
-  config: RepoConfig;
-  repo: Repo;
-}
-export interface RepoConfig {
-  label_configs: LabelConfig[];
-}
-export interface LabelConfig {
-  label_id: number;
-  reward_config: string;
-  reward_contract: Addr;
+export interface Config {
+  cw20_base_code_id: number;
+  decimals: number;
+  name: string;
+  symbol: string;
+  valid_orgs: string[];
+  valid_repos: Repo[];
 }
 export interface Repo {
   org: string;
   repo: string;
 }
-export interface LinkRepoMsg {
-  config: RepoConfig;
+export type ExecuteMsg = {
+  reward: RewardMsg;
+};
+export interface RewardMsg {
+  pr_id: number;
+  recipient_address: Addr;
   repo: Repo;
-  repo_admin_permissions_proof: Proof;
-  repo_admin_user_proof: Proof;
-  secret: Binary;
+  reward_config: string;
+  user_id: number;
 }
-export type QueryMsg =
-  | {
-      linked_address: {
-        github_user_id: number;
-      };
-    }
-  | {
-      repos: {};
-    }
-  | {
-      repo_config: {
-        repo: Repo;
-      };
-    }
-  | {
-      query_pr_eligibility: {
-        github_user_id: number;
-        pr_id: number;
-        repo: Repo;
-      };
-    };
+export type QueryMsg = {
+  rewards: RewardMsg;
+};
 export interface MigrateMsg {}
-export type NullableAddr = Addr | null;
-export type PrEligibility = "claimed" | "eligible" | "ineligible";
-export type NullableRepoConfig = RepoConfig | null;
-export type ArrayOfRepo = Repo[];
+export type PrReward = {
+  token: {
+    amount: Uint128;
+    denom: string;
+  };
+};
+export type Uint128 = string;
+export interface QueryRewardsResponse {
+  claimed: boolean;
+  rewards: PrReward[];
+}

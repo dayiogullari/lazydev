@@ -141,7 +141,7 @@
             let
               lazydev-schema = craneLib.buildPackage {
                 src = craneLib.cleanCargoSource ./.;
-                cargoBuildExtraArgs = "-p lazydev-token-reward";
+                cargoExtraArgs = "-p lazydev-token-reward";
                 strictDeps = true;
                 CARGO_PROFILE = "dev";
                 doCheck = false;
@@ -236,6 +236,7 @@
               pkgs.nodejs
               pkgs.biome
               pkgs.taplo
+              pkgs.tree
             ];
             nativeBuildInputs = [
               config.treefmt.build.wrapper
