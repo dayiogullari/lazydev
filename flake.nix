@@ -167,17 +167,19 @@
                 mv ./schema $out/lazydev
 
                 ${lazydev-token-reward-schema}/bin/schema
-                mv ./schema $out/lazydev-token-reward-schema
+                mv ./schema $out/lazydev-token-reward
               '';
             };
 
+          # i was not able to nixify this incredibly cursed package
           ts-codegen = pkgs.writeShellApplication {
             name = "ts-codegen";
             runtimeInputs = [ pkgs.deno ];
             text = ''
               ${ensureAtRepositoryRoot}
 
-              deno run --allow-read --allow-env --allow-sys --allow-run npm:@cosmwasm/ts-codegen generate --client --schema ${schema}/lazydev --out ./frontend/ts/lazydev --name lazydev
+              npx @cosmwasm/ts-codegen generate --plugin client --schema ${schema}/lazydev --out ./frontend/ts/lazydev --name lazydev --no-bundle
+              npx @cosmwasm/ts-codegen generate --plugin client --schema ${schema}/lazydev-token-reward --out ./frontend/ts/lazydev-token-reward --name lazydev-token-reward --no-bundle
             '';
           };
         in
