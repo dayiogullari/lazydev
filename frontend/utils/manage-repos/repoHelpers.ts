@@ -32,7 +32,7 @@ export interface PaginationInfo {
 export const fetchAdminRepos = async (
   accessToken: string,
   page: number = 1,
-  perPage: number = 100
+  perPage: number = 100,
 ): Promise<{ repos: AdminRepo[]; pagination: PaginationInfo }> => {
   const response = await getAdminRepos(accessToken, page, perPage);
 
@@ -63,7 +63,7 @@ export const fetchAdminRepos = async (
 
 export const fetchRepoDetails = async (
   repoId: number,
-  accessToken: string
+  accessToken: string,
 ): Promise<RepoDetails> => {
   return await getRepoDetails(repoId, accessToken);
 };

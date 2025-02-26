@@ -1,610 +1,606 @@
 {
-	"contract_name": "lazydev",
-	"contract_version": "0.0.0",
-	"idl_version": "1.0.0",
-	"instantiate": {
-		"$schema": "http://json-schema.org/draft-07/schema#",
-		"title": "InstantiateMsg",
-		"type": "object",
-		"required": [
-			"commitment_delay_max_height",
-			"commitment_delay_min_height",
-			"verifier_address"
-		],
-		"properties": {
-			"commitment_delay_max_height": {
-				"type": "integer",
-				"format": "uint64",
-				"minimum": 0.0
-			},
-			"commitment_delay_min_height": {
-				"type": "integer",
-				"format": "uint64",
-				"minimum": 0.0
-			},
-			"verifier_address": {
-				"description": "The address of the pre-deployed reclaim verifier contract.\n\nSupported cosmos chains can be found [here][reclaim-cosmos].\n\n[reclaim-cosmos]: https://docs.reclaimprotocol.org/sdk/cosmos",
-				"allOf": [
-					{
-						"$ref": "#/definitions/Addr"
-					}
-				]
-			}
-		},
-		"additionalProperties": false,
-		"definitions": {
-			"Addr": {
-				"description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
-				"type": "string"
-			}
-		}
-	},
-	"execute": {
-		"$schema": "http://json-schema.org/draft-07/schema#",
-		"title": "ExecuteMsg",
-		"oneOf": [
-			{
-				"type": "object",
-				"required": ["commit_account"],
-				"properties": {
-					"commit_account": {
-						"$ref": "#/definitions/CommitAccountMsg"
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"type": "object",
-				"required": ["link_account"],
-				"properties": {
-					"link_account": {
-						"$ref": "#/definitions/LinkAccountMsg"
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"type": "object",
-				"required": ["reward_pr"],
-				"properties": {
-					"reward_pr": {
-						"$ref": "#/definitions/RewardPrMsg"
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"type": "object",
-				"required": ["commit_repo"],
-				"properties": {
-					"commit_repo": {
-						"$ref": "#/definitions/CommitRepoMsg"
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"type": "object",
-				"required": ["link_repo"],
-				"properties": {
-					"link_repo": {
-						"$ref": "#/definitions/LinkRepoMsg"
-					}
-				},
-				"additionalProperties": false
-			}
-		],
-		"definitions": {
-			"Addr": {
-				"description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
-				"type": "string"
-			},
-			"Binary": {
-				"description": "Binary is a wrapper around Vec<u8> to add base64 de/serialization with serde. It also adds some helper methods to help encode inline.\n\nThis is only needed as serde-json-{core,wasm} has a horrible encoding for Vec<u8>. See also <https://github.com/CosmWasm/cosmwasm/blob/main/docs/MESSAGE_TYPES.md>.",
-				"type": "string"
-			},
-			"ClaimInfo": {
-				"type": "object",
-				"required": ["context", "parameters", "provider"],
-				"properties": {
-					"context": {
-						"type": "string"
-					},
-					"parameters": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					}
-				},
-				"additionalProperties": false
-			},
-			"CommitAccountMsg": {
-				"description": "Commit to linking an address with a proof in a future message.\n\nIn order to prevent a user proof being frontrun and assigned to a different recipient address, linking an account is done in two steps via a commit/reveal scheme (inspired by [ens]). A secret is generated client side, and then the sha256 sum of this secret is committed as the key to the (id, addr) that will later be linked. Once this is committed on chain, the client can then read the commitment and ensure that it was indeed committed as expected (i.e. that it was not frontrun), and then submit a [`LinkAccount`] transaction which itself contains the the zktls proof for the user account, along with the raw secret. Since only one commitement can be submitted per github user id (see [`USER_COMMITMENTS`][crate::state::USER_COMMITEMENTS]), it is not possible for this link account message proof to be frontrun.\n\n[ens]: https://support.ens.domains/en/articles/7900438-registration-steps",
-				"type": "object",
-				"required": ["commitment_key", "github_user_id", "recipient_address"],
-				"properties": {
-					"commitment_key": {
-						"description": "sha256(secret)",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Binary"
-							}
-						]
-					},
-					"github_user_id": {
-						"description": "The id of the user to be associated with the recipient address.",
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					},
-					"recipient_address": {
-						"description": "The address to be linked to the github user id.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Addr"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"CommitRepoMsg": {
-				"description": "Commit to linking a repository as a repo admin.\n\nLinking a repo uses the same commit/reveal schema as [`CommitAccountMsg`].",
-				"type": "object",
-				"required": ["commitment_key", "config", "repo"],
-				"properties": {
-					"commitment_key": {
-						"description": "sha256(secret)",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Binary"
-							}
-						]
-					},
-					"config": {
-						"description": "The repo that will be linked.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/RepoConfig"
-							}
-						]
-					},
-					"repo": {
-						"description": "The repo that will be linked.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Repo"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"CompleteClaimData": {
-				"type": "object",
-				"required": ["epoch", "identifier", "owner", "timestampS"],
-				"properties": {
-					"epoch": {
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					},
-					"identifier": {
-						"type": "string"
-					},
-					"owner": {
-						"type": "string"
-					},
-					"timestampS": {
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					}
-				},
-				"additionalProperties": false
-			},
-			"LabelConfig": {
-				"type": "object",
-				"required": ["label_id", "reward_config", "reward_contract"],
-				"properties": {
-					"label_id": {
-						"description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
-						"type": "integer",
-						"format": "uint64",
-						"minimum": 0.0
-					},
-					"reward_config": {
-						"description": "Additional configuration that will be passed to the reward contract. This is stringified json since [`serde_json_wasm`] doesn't support a dynamic `Value`-like object.",
-						"type": "string"
-					},
-					"reward_contract": {
-						"description": "The address of the reard contract that will process the [`RewardMsg`][crate::msg::RewardMsg] callback.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Addr"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"LinkAccountMsg": {
-				"description": "Link a github user id with a recipient address with a zktls proof of the user's account.\n\nThis is the second phase of the account linking (see [`CommitGithubUserId`] for more information).",
-				"type": "object",
-				"required": ["proof", "recipient_address", "secret"],
-				"properties": {
-					"proof": {
-						"description": "The zktls proof of the user account. This also contains the user id.\n\nThis proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Proof"
-							}
-						]
-					},
-					"recipient_address": {
-						"description": "The address to be linked to the github user id.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Addr"
-							}
-						]
-					},
-					"secret": {
-						"description": "The secret that was generated client side during the [`CommitGithubUserId`] step.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Binary"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"LinkRepoMsg": {
-				"description": "Link a repo as an admin. This follows the same commit/reveal scheme as [`LinkAccount`].",
-				"type": "object",
-				"required": [
-					"config",
-					"repo",
-					"repo_admin_permissions_proof",
-					"repo_admin_user_proof",
-					"secret"
-				],
-				"properties": {
-					"config": {
-						"$ref": "#/definitions/RepoConfig"
-					},
-					"repo": {
-						"$ref": "#/definitions/Repo"
-					},
-					"repo_admin_permissions_proof": {
-						"description": "The zktls proof of the user's permissions of the github repo.\n\nThis is a proof of the (`/repos/{owner}/{repo}/collaborators/{username}/permission`)[endpoint] endpoint.\n\n[endpoint]: https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#get-repository-permissions-for-a-user",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Proof"
-							}
-						]
-					},
-					"repo_admin_user_proof": {
-						"description": "The zktls proof of the admin user account. This also contains the user id.\n\nThis proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Proof"
-							}
-						]
-					},
-					"secret": {
-						"description": "The secret that was generated client side during the [`CommitRepoMsg`] step.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Binary"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"Proof": {
-				"type": "object",
-				"required": ["claimInfo", "signedClaim"],
-				"properties": {
-					"claimInfo": {
-						"$ref": "#/definitions/ClaimInfo"
-					},
-					"signedClaim": {
-						"$ref": "#/definitions/SignedClaim"
-					}
-				},
-				"additionalProperties": false
-			},
-			"Repo": {
-				"type": "object",
-				"required": ["org", "repo"],
-				"properties": {
-					"org": {
-						"type": "string"
-					},
-					"repo": {
-						"type": "string"
-					}
-				},
-				"additionalProperties": false
-			},
-			"RepoConfig": {
-				"type": "object",
-				"required": ["label_configs"],
-				"properties": {
-					"label_configs": {
-						"description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/LabelConfig"
-						}
-					}
-				},
-				"additionalProperties": false
-			},
-			"RewardPrMsg": {
-				"description": "Reward a PR with a zktls proof of the pull request.",
-				"type": "object",
-				"required": ["proof"],
-				"properties": {
-					"proof": {
-						"description": "The zktls proof of the PR from github.\n\nThis proof is of the <https://api.github.com/repos/ORG/REPO/pulls/ID> endpoint. The zktls proof verifies the authenticity of the pull request state and contents, ensuring that a user cannot fabricate a PR that will give them unearned rewards.",
-						"allOf": [
-							{
-								"$ref": "#/definitions/Proof"
-							}
-						]
-					}
-				},
-				"additionalProperties": false
-			},
-			"SignedClaim": {
-				"type": "object",
-				"required": ["claim", "signatures"],
-				"properties": {
-					"claim": {
-						"$ref": "#/definitions/CompleteClaimData"
-					},
-					"signatures": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					}
-				},
-				"additionalProperties": false
-			}
-		}
-	},
-	"query": {
-		"$schema": "http://json-schema.org/draft-07/schema#",
-		"title": "QueryMsg",
-		"oneOf": [
-			{
-				"description": "Returns the linked account of a github user, or [`None`] if the user has not yet been linked.",
-				"type": "object",
-				"required": ["linked_address"],
-				"properties": {
-					"linked_address": {
-						"type": "object",
-						"required": ["github_user_id"],
-						"properties": {
-							"github_user_id": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							}
-						},
-						"additionalProperties": false
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"description": "Returns all of the configured repos.",
-				"type": "object",
-				"required": ["repos"],
-				"properties": {
-					"repos": {
-						"type": "object",
-						"additionalProperties": false
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"description": "Returns all of the configured repos.",
-				"type": "object",
-				"required": ["repo_config"],
-				"properties": {
-					"repo_config": {
-						"type": "object",
-						"required": ["repo"],
-						"properties": {
-							"repo": {
-								"$ref": "#/definitions/Repo"
-							}
-						},
-						"additionalProperties": false
-					}
-				},
-				"additionalProperties": false
-			},
-			{
-				"description": "Returns whether a PR is eligible for rewards.",
-				"type": "object",
-				"required": ["query_pr_eligibility"],
-				"properties": {
-					"query_pr_eligibility": {
-						"type": "object",
-						"required": ["github_user_id", "pr_id", "repo"],
-						"properties": {
-							"github_user_id": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							},
-							"pr_id": {
-								"type": "integer",
-								"format": "uint64",
-								"minimum": 0.0
-							},
-							"repo": {
-								"$ref": "#/definitions/Repo"
-							}
-						},
-						"additionalProperties": false
-					}
-				},
-				"additionalProperties": false
-			}
-		],
-		"definitions": {
-			"Repo": {
-				"type": "object",
-				"required": ["org", "repo"],
-				"properties": {
-					"org": {
-						"type": "string"
-					},
-					"repo": {
-						"type": "string"
-					}
-				},
-				"additionalProperties": false
-			}
-		}
-	},
-	"migrate": {
-		"$schema": "http://json-schema.org/draft-07/schema#",
-		"title": "MigrateMsg",
-		"description": "The migration message for lazydev.\n\nThis is empty since no migrations are currently supported or required.",
-		"type": "object",
-		"additionalProperties": false
-	},
-	"sudo": null,
-	"responses": {
-		"linked_address": {
-			"$schema": "http://json-schema.org/draft-07/schema#",
-			"title": "Nullable_Addr",
-			"anyOf": [
-				{
-					"$ref": "#/definitions/Addr"
-				},
-				{
-					"type": "null"
-				}
-			],
-			"definitions": {
-				"Addr": {
-					"description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
-					"type": "string"
-				}
-			}
-		},
-		"query_pr_eligibility": {
-			"$schema": "http://json-schema.org/draft-07/schema#",
-			"title": "PrEligibility",
-			"oneOf": [
-				{
-					"description": "The PR has already been claimed.",
-					"type": "string",
-					"enum": ["claimed"]
-				},
-				{
-					"description": "The PR is eligble for rewards.",
-					"type": "string",
-					"enum": ["eligible"]
-				},
-				{
-					"description": "The PR is not eligible for rewards, either because the user has not yet linked their account or the repo is not configured for rewards.",
-					"type": "string",
-					"enum": ["ineligible"]
-				}
-			]
-		},
-		"repo_config": {
-			"$schema": "http://json-schema.org/draft-07/schema#",
-			"title": "Nullable_RepoConfig",
-			"anyOf": [
-				{
-					"$ref": "#/definitions/RepoConfig"
-				},
-				{
-					"type": "null"
-				}
-			],
-			"definitions": {
-				"Addr": {
-					"description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
-					"type": "string"
-				},
-				"LabelConfig": {
-					"type": "object",
-					"required": ["label_id", "reward_config", "reward_contract"],
-					"properties": {
-						"label_id": {
-							"description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
-							"type": "integer",
-							"format": "uint64",
-							"minimum": 0.0
-						},
-						"reward_config": {
-							"description": "Additional configuration that will be passed to the reward contract. This is stringified json since [`serde_json_wasm`] doesn't support a dynamic `Value`-like object.",
-							"type": "string"
-						},
-						"reward_contract": {
-							"description": "The address of the reard contract that will process the [`RewardMsg`][crate::msg::RewardMsg] callback.",
-							"allOf": [
-								{
-									"$ref": "#/definitions/Addr"
-								}
-							]
-						}
-					},
-					"additionalProperties": false
-				},
-				"RepoConfig": {
-					"type": "object",
-					"required": ["label_configs"],
-					"properties": {
-						"label_configs": {
-							"description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/LabelConfig"
-							}
-						}
-					},
-					"additionalProperties": false
-				}
-			}
-		},
-		"repos": {
-			"$schema": "http://json-schema.org/draft-07/schema#",
-			"title": "Array_of_Repo",
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/Repo"
-			},
-			"definitions": {
-				"Repo": {
-					"type": "object",
-					"required": ["org", "repo"],
-					"properties": {
-						"org": {
-							"type": "string"
-						},
-						"repo": {
-							"type": "string"
-						}
-					},
-					"additionalProperties": false
-				}
-			}
-		}
-	}
+  "contract_name": "lazydev",
+  "contract_version": "0.0.0",
+  "idl_version": "1.0.0",
+  "instantiate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "InstantiateMsg",
+    "type": "object",
+    "required": ["commitment_delay_max_height", "commitment_delay_min_height", "verifier_address"],
+    "properties": {
+      "commitment_delay_max_height": {
+        "type": "integer",
+        "format": "uint64",
+        "minimum": 0.0
+      },
+      "commitment_delay_min_height": {
+        "type": "integer",
+        "format": "uint64",
+        "minimum": 0.0
+      },
+      "verifier_address": {
+        "description": "The address of the pre-deployed reclaim verifier contract.\n\nSupported cosmos chains can be found [here][reclaim-cosmos].\n\n[reclaim-cosmos]: https://docs.reclaimprotocol.org/sdk/cosmos",
+        "allOf": [
+          {
+            "$ref": "#/definitions/Addr"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false,
+    "definitions": {
+      "Addr": {
+        "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+        "type": "string"
+      }
+    }
+  },
+  "execute": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ExecuteMsg",
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["commit_account"],
+        "properties": {
+          "commit_account": {
+            "$ref": "#/definitions/CommitAccountMsg"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": ["link_account"],
+        "properties": {
+          "link_account": {
+            "$ref": "#/definitions/LinkAccountMsg"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": ["reward_pr"],
+        "properties": {
+          "reward_pr": {
+            "$ref": "#/definitions/RewardPrMsg"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": ["commit_repo"],
+        "properties": {
+          "commit_repo": {
+            "$ref": "#/definitions/CommitRepoMsg"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": ["link_repo"],
+        "properties": {
+          "link_repo": {
+            "$ref": "#/definitions/LinkRepoMsg"
+          }
+        },
+        "additionalProperties": false
+      }
+    ],
+    "definitions": {
+      "Addr": {
+        "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+        "type": "string"
+      },
+      "Binary": {
+        "description": "Binary is a wrapper around Vec<u8> to add base64 de/serialization with serde. It also adds some helper methods to help encode inline.\n\nThis is only needed as serde-json-{core,wasm} has a horrible encoding for Vec<u8>. See also <https://github.com/CosmWasm/cosmwasm/blob/main/docs/MESSAGE_TYPES.md>.",
+        "type": "string"
+      },
+      "ClaimInfo": {
+        "type": "object",
+        "required": ["context", "parameters", "provider"],
+        "properties": {
+          "context": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommitAccountMsg": {
+        "description": "Commit to linking an address with a proof in a future message.\n\nIn order to prevent a user proof being frontrun and assigned to a different recipient address, linking an account is done in two steps via a commit/reveal scheme (inspired by [ens]). A secret is generated client side, and then the sha256 sum of this secret is committed as the key to the (id, addr) that will later be linked. Once this is committed on chain, the client can then read the commitment and ensure that it was indeed committed as expected (i.e. that it was not frontrun), and then submit a [`LinkAccount`] transaction which itself contains the the zktls proof for the user account, along with the raw secret. Since only one commitement can be submitted per github user id (see [`USER_COMMITMENTS`][crate::state::USER_COMMITEMENTS]), it is not possible for this link account message proof to be frontrun.\n\n[ens]: https://support.ens.domains/en/articles/7900438-registration-steps",
+        "type": "object",
+        "required": ["commitment_key", "github_user_id", "recipient_address"],
+        "properties": {
+          "commitment_key": {
+            "description": "sha256(secret)",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Binary"
+              }
+            ]
+          },
+          "github_user_id": {
+            "description": "The id of the user to be associated with the recipient address.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "recipient_address": {
+            "description": "The address to be linked to the github user id.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Addr"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommitRepoMsg": {
+        "description": "Commit to linking a repository as a repo admin.\n\nLinking a repo uses the same commit/reveal schema as [`CommitAccountMsg`].",
+        "type": "object",
+        "required": ["commitment_key", "config", "repo"],
+        "properties": {
+          "commitment_key": {
+            "description": "sha256(secret)",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Binary"
+              }
+            ]
+          },
+          "config": {
+            "description": "The repo that will be linked.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/RepoConfig"
+              }
+            ]
+          },
+          "repo": {
+            "description": "The repo that will be linked.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Repo"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompleteClaimData": {
+        "type": "object",
+        "required": ["epoch", "identifier", "owner", "timestampS"],
+        "properties": {
+          "epoch": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "timestampS": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        "additionalProperties": false
+      },
+      "LabelConfig": {
+        "type": "object",
+        "required": ["label_id", "reward_config", "reward_contract"],
+        "properties": {
+          "label_id": {
+            "description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "reward_config": {
+            "description": "Additional configuration that will be passed to the reward contract. This is stringified json since [`serde_json_wasm`] doesn't support a dynamic `Value`-like object.",
+            "type": "string"
+          },
+          "reward_contract": {
+            "description": "The address of the reard contract that will process the [`RewardMsg`][crate::msg::RewardMsg] callback.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Addr"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LinkAccountMsg": {
+        "description": "Link a github user id with a recipient address with a zktls proof of the user's account.\n\nThis is the second phase of the account linking (see [`CommitGithubUserId`] for more information).",
+        "type": "object",
+        "required": ["proof", "recipient_address", "secret"],
+        "properties": {
+          "proof": {
+            "description": "The zktls proof of the user account. This also contains the user id.\n\nThis proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Proof"
+              }
+            ]
+          },
+          "recipient_address": {
+            "description": "The address to be linked to the github user id.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Addr"
+              }
+            ]
+          },
+          "secret": {
+            "description": "The secret that was generated client side during the [`CommitGithubUserId`] step.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Binary"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LinkRepoMsg": {
+        "description": "Link a repo as an admin. This follows the same commit/reveal scheme as [`LinkAccount`].",
+        "type": "object",
+        "required": [
+          "config",
+          "repo",
+          "repo_admin_permissions_proof",
+          "repo_admin_user_proof",
+          "secret"
+        ],
+        "properties": {
+          "config": {
+            "$ref": "#/definitions/RepoConfig"
+          },
+          "repo": {
+            "$ref": "#/definitions/Repo"
+          },
+          "repo_admin_permissions_proof": {
+            "description": "The zktls proof of the user's permissions of the github repo.\n\nThis is a proof of the (`/repos/{owner}/{repo}/collaborators/{username}/permission`)[endpoint] endpoint.\n\n[endpoint]: https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#get-repository-permissions-for-a-user",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Proof"
+              }
+            ]
+          },
+          "repo_admin_user_proof": {
+            "description": "The zktls proof of the admin user account. This also contains the user id.\n\nThis proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Proof"
+              }
+            ]
+          },
+          "secret": {
+            "description": "The secret that was generated client side during the [`CommitRepoMsg`] step.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Binary"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "Proof": {
+        "type": "object",
+        "required": ["claimInfo", "signedClaim"],
+        "properties": {
+          "claimInfo": {
+            "$ref": "#/definitions/ClaimInfo"
+          },
+          "signedClaim": {
+            "$ref": "#/definitions/SignedClaim"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Repo": {
+        "type": "object",
+        "required": ["org", "repo"],
+        "properties": {
+          "org": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RepoConfig": {
+        "type": "object",
+        "required": ["label_configs"],
+        "properties": {
+          "label_configs": {
+            "description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/LabelConfig"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RewardPrMsg": {
+        "description": "Reward a PR with a zktls proof of the pull request.",
+        "type": "object",
+        "required": ["proof"],
+        "properties": {
+          "proof": {
+            "description": "The zktls proof of the PR from github.\n\nThis proof is of the <https://api.github.com/repos/ORG/REPO/pulls/ID> endpoint. The zktls proof verifies the authenticity of the pull request state and contents, ensuring that a user cannot fabricate a PR that will give them unearned rewards.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/Proof"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignedClaim": {
+        "type": "object",
+        "required": ["claim", "signatures"],
+        "properties": {
+          "claim": {
+            "$ref": "#/definitions/CompleteClaimData"
+          },
+          "signatures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "query": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "QueryMsg",
+    "oneOf": [
+      {
+        "description": "Returns the linked account of a github user, or [`None`] if the user has not yet been linked.",
+        "type": "object",
+        "required": ["linked_address"],
+        "properties": {
+          "linked_address": {
+            "type": "object",
+            "required": ["github_user_id"],
+            "properties": {
+              "github_user_id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns all of the configured repos.",
+        "type": "object",
+        "required": ["repos"],
+        "properties": {
+          "repos": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns all of the configured repos.",
+        "type": "object",
+        "required": ["repo_config"],
+        "properties": {
+          "repo_config": {
+            "type": "object",
+            "required": ["repo"],
+            "properties": {
+              "repo": {
+                "$ref": "#/definitions/Repo"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns whether a PR is eligible for rewards.",
+        "type": "object",
+        "required": ["query_pr_eligibility"],
+        "properties": {
+          "query_pr_eligibility": {
+            "type": "object",
+            "required": ["github_user_id", "pr_id", "repo"],
+            "properties": {
+              "github_user_id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              },
+              "pr_id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              },
+              "repo": {
+                "$ref": "#/definitions/Repo"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ],
+    "definitions": {
+      "Repo": {
+        "type": "object",
+        "required": ["org", "repo"],
+        "properties": {
+          "org": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "migrate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MigrateMsg",
+    "description": "The migration message for lazydev.\n\nThis is empty since no migrations are currently supported or required.",
+    "type": "object",
+    "additionalProperties": false
+  },
+  "sudo": null,
+  "responses": {
+    "linked_address": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Nullable_Addr",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Addr"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        }
+      }
+    },
+    "query_pr_eligibility": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PrEligibility",
+      "oneOf": [
+        {
+          "description": "The PR has already been claimed.",
+          "type": "string",
+          "enum": ["claimed"]
+        },
+        {
+          "description": "The PR is eligble for rewards.",
+          "type": "string",
+          "enum": ["eligible"]
+        },
+        {
+          "description": "The PR is not eligible for rewards, either because the user has not yet linked their account or the repo is not configured for rewards.",
+          "type": "string",
+          "enum": ["ineligible"]
+        }
+      ]
+    },
+    "repo_config": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Nullable_RepoConfig",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/RepoConfig"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        },
+        "LabelConfig": {
+          "type": "object",
+          "required": ["label_id", "reward_config", "reward_contract"],
+          "properties": {
+            "label_id": {
+              "description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "reward_config": {
+              "description": "Additional configuration that will be passed to the reward contract. This is stringified json since [`serde_json_wasm`] doesn't support a dynamic `Value`-like object.",
+              "type": "string"
+            },
+            "reward_contract": {
+              "description": "The address of the reard contract that will process the [`RewardMsg`][crate::msg::RewardMsg] callback.",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Addr"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "RepoConfig": {
+          "type": "object",
+          "required": ["label_configs"],
+          "properties": {
+            "label_configs": {
+              "description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LabelConfig"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "repos": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Array_of_Repo",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Repo"
+      },
+      "definitions": {
+        "Repo": {
+          "type": "object",
+          "required": ["org", "repo"],
+          "properties": {
+            "org": {
+              "type": "string"
+            },
+            "repo": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  }
 }

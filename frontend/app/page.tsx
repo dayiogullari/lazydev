@@ -64,9 +64,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session?.user?.email]);
 
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
-    new Set([activeTab])
-  );
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set([activeTab]));
 
   useEffect(() => {
     setVisitedTabs((prev) => new Set([...prev, activeTab]));
@@ -78,9 +76,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const fetchedContributions = await getGithubContributions(
-        session.user.githubUsername
-      );
+      const fetchedContributions = await getGithubContributions(session.user.githubUsername);
 
       setContributions(fetchedContributions);
       setTotalCoins(123);
@@ -114,10 +110,7 @@ export default function Home() {
 
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8">
         {Array.from(visitedTabs).map((tab) => (
-          <div
-            key={tab}
-            className={activeTab !== tab ? "hidden" : ""}
-          >
+          <div key={tab} className={activeTab !== tab ? "hidden" : ""}>
             <AnimatePresence mode="wait">
               {activeTab === tab && (
                 <motion.div
@@ -138,9 +131,7 @@ export default function Home() {
                     />
                   )}
 
-                  {tab === "leaderboard" && (
-                    <LeaderboardTab mockLeaderboard={mockLeaderboard} />
-                  )}
+                  {tab === "leaderboard" && <LeaderboardTab mockLeaderboard={mockLeaderboard} />}
 
                   {tab === "achievements" && <AchievementsTab />}
                   {tab === "challenges" && <ChallengesTab />}

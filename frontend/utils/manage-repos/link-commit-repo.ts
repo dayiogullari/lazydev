@@ -34,16 +34,12 @@ const getSigningClient = async (walletAddress: string) => {
   const offlineSigner = window.getOfflineSigner?.("pion-1");
   if (!offlineSigner) throw new Error("No signer available");
 
-  const signingClient = await SigningCosmWasmClient.connectWithSigner(
-    RPC_URL,
-    offlineSigner,
-    {
-      gasPrice: {
-        denom: "untrn",
-        amount: Decimal.fromUserInput("0.025", 3),
-      },
-    }
-  );
+  const signingClient = await SigningCosmWasmClient.connectWithSigner(RPC_URL, offlineSigner, {
+    gasPrice: {
+      denom: "untrn",
+      amount: Decimal.fromUserInput("0.025", 3),
+    },
+  });
 
   return new LazydevClient(signingClient, walletAddress, CONTRACT_ADDRESS);
 };

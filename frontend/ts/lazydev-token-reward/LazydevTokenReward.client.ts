@@ -4,149 +4,138 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import {
-	CosmWasmClient,
-	SigningCosmWasmClient,
-	ExecuteResult,
-} from "@cosmjs/cosmwasm-stargate";
+import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
 import {
-	Addr,
-	InstantiateMsg,
-	Config,
-	ExecuteMsg,
-	RewardMsg,
-	Repo,
-	QueryMsg,
-	MigrateMsg,
-	PrReward,
-	Uint128,
-	QueryRewardsResponse,
+  Addr,
+  InstantiateMsg,
+  Config,
+  ExecuteMsg,
+  RewardMsg,
+  Repo,
+  QueryMsg,
+  MigrateMsg,
+  PrReward,
+  Uint128,
+  QueryRewardsResponse,
 } from "./LazydevTokenReward.types";
 export interface LazydevTokenRewardReadOnlyInterface {
-	contractAddress: string;
-	rewards: ({
-		prId,
-		recipientAddress,
-		repo,
-		rewardConfig,
-		userId,
-	}: {
-		prId: number;
-		recipientAddress: Addr;
-		repo: Repo;
-		rewardConfig: string;
-		userId: number;
-	}) => Promise<QueryRewardsResponse>;
+  contractAddress: string;
+  rewards: ({
+    prId,
+    recipientAddress,
+    repo,
+    rewardConfig,
+    userId,
+  }: {
+    prId: number;
+    recipientAddress: Addr;
+    repo: Repo;
+    rewardConfig: string;
+    userId: number;
+  }) => Promise<QueryRewardsResponse>;
 }
-export class LazydevTokenRewardQueryClient
-	implements LazydevTokenRewardReadOnlyInterface
-{
-	client: CosmWasmClient;
-	contractAddress: string;
-	constructor(client: CosmWasmClient, contractAddress: string) {
-		this.client = client;
-		this.contractAddress = contractAddress;
-		this.rewards = this.rewards.bind(this);
-	}
-	rewards = async ({
-		prId,
-		recipientAddress,
-		repo,
-		rewardConfig,
-		userId,
-	}: {
-		prId: number;
-		recipientAddress: Addr;
-		repo: Repo;
-		rewardConfig: string;
-		userId: number;
-	}): Promise<QueryRewardsResponse> => {
-		return this.client.queryContractSmart(this.contractAddress, {
-			rewards: {
-				pr_id: prId,
-				recipient_address: recipientAddress,
-				repo,
-				reward_config: rewardConfig,
-				user_id: userId,
-			},
-		});
-	};
+export class LazydevTokenRewardQueryClient implements LazydevTokenRewardReadOnlyInterface {
+  client: CosmWasmClient;
+  contractAddress: string;
+  constructor(client: CosmWasmClient, contractAddress: string) {
+    this.client = client;
+    this.contractAddress = contractAddress;
+    this.rewards = this.rewards.bind(this);
+  }
+  rewards = async ({
+    prId,
+    recipientAddress,
+    repo,
+    rewardConfig,
+    userId,
+  }: {
+    prId: number;
+    recipientAddress: Addr;
+    repo: Repo;
+    rewardConfig: string;
+    userId: number;
+  }): Promise<QueryRewardsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      rewards: {
+        pr_id: prId,
+        recipient_address: recipientAddress,
+        repo,
+        reward_config: rewardConfig,
+        user_id: userId,
+      },
+    });
+  };
 }
-export interface LazydevTokenRewardInterface
-	extends LazydevTokenRewardReadOnlyInterface {
-	contractAddress: string;
-	sender: string;
-	reward: (
-		{
-			prId,
-			recipientAddress,
-			repo,
-			rewardConfig,
-			userId,
-		}: {
-			prId: number;
-			recipientAddress: Addr;
-			repo: Repo;
-			rewardConfig: string;
-			userId: number;
-		},
-		fee_?: number | StdFee | "auto",
-		memo_?: string,
-		funds_?: Coin[],
-	) => Promise<ExecuteResult>;
+export interface LazydevTokenRewardInterface extends LazydevTokenRewardReadOnlyInterface {
+  contractAddress: string;
+  sender: string;
+  reward: (
+    {
+      prId,
+      recipientAddress,
+      repo,
+      rewardConfig,
+      userId,
+    }: {
+      prId: number;
+      recipientAddress: Addr;
+      repo: Repo;
+      rewardConfig: string;
+      userId: number;
+    },
+    fee_?: number | StdFee | "auto",
+    memo_?: string,
+    funds_?: Coin[],
+  ) => Promise<ExecuteResult>;
 }
 export class LazydevTokenRewardClient
-	extends LazydevTokenRewardQueryClient
-	implements LazydevTokenRewardInterface
+  extends LazydevTokenRewardQueryClient
+  implements LazydevTokenRewardInterface
 {
-	client: SigningCosmWasmClient;
-	sender: string;
-	contractAddress: string;
-	constructor(
-		client: SigningCosmWasmClient,
-		sender: string,
-		contractAddress: string,
-	) {
-		super(client, contractAddress);
-		this.client = client;
-		this.sender = sender;
-		this.contractAddress = contractAddress;
-		this.reward = this.reward.bind(this);
-	}
-	reward = async (
-		{
-			prId,
-			recipientAddress,
-			repo,
-			rewardConfig,
-			userId,
-		}: {
-			prId: number;
-			recipientAddress: Addr;
-			repo: Repo;
-			rewardConfig: string;
-			userId: number;
-		},
-		fee_: number | StdFee | "auto" = "auto",
-		memo_?: string,
-		funds_?: Coin[],
-	): Promise<ExecuteResult> => {
-		return await this.client.execute(
-			this.sender,
-			this.contractAddress,
-			{
-				reward: {
-					pr_id: prId,
-					recipient_address: recipientAddress,
-					repo,
-					reward_config: rewardConfig,
-					user_id: userId,
-				},
-			},
-			fee_,
-			memo_,
-			funds_,
-		);
-	};
+  client: SigningCosmWasmClient;
+  sender: string;
+  contractAddress: string;
+  constructor(client: SigningCosmWasmClient, sender: string, contractAddress: string) {
+    super(client, contractAddress);
+    this.client = client;
+    this.sender = sender;
+    this.contractAddress = contractAddress;
+    this.reward = this.reward.bind(this);
+  }
+  reward = async (
+    {
+      prId,
+      recipientAddress,
+      repo,
+      rewardConfig,
+      userId,
+    }: {
+      prId: number;
+      recipientAddress: Addr;
+      repo: Repo;
+      rewardConfig: string;
+      userId: number;
+    },
+    fee_: number | StdFee | "auto" = "auto",
+    memo_?: string,
+    funds_?: Coin[],
+  ): Promise<ExecuteResult> => {
+    return await this.client.execute(
+      this.sender,
+      this.contractAddress,
+      {
+        reward: {
+          pr_id: prId,
+          recipient_address: recipientAddress,
+          repo,
+          reward_config: rewardConfig,
+          user_id: userId,
+        },
+      },
+      fee_,
+      memo_,
+      funds_,
+    );
+  };
 }

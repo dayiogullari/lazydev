@@ -6,41 +6,41 @@
 
 export type Addr = string;
 export interface InstantiateMsg {
-	config: Config;
-	lazydev_address: Addr;
+  config: Config;
+  lazydev_address: Addr;
 }
 export interface Config {
-	cw20_base_code_id: number;
-	decimals: number;
-	name: string;
-	symbol: string;
+  cw20_base_code_id: number;
+  decimals: number;
+  name: string;
+  symbol: string;
 }
 export type ExecuteMsg = {
-	reward: RewardMsg;
+  reward: RewardMsg;
 };
 export interface RewardMsg {
-	pr_id: number;
-	recipient_address: Addr;
-	repo: Repo;
-	reward_config: string;
-	user_id: number;
+  pr_id: number;
+  recipient_address: Addr;
+  repo: Repo;
+  reward_config: string;
+  user_id: number;
 }
 export interface Repo {
-	org: string;
-	repo: string;
+  org: string;
+  repo: string;
 }
 export type QueryMsg = {
-	rewards: RewardMsg;
+  rewards: RewardMsg;
 };
 export interface MigrateMsg {}
 export type PrReward = {
-	token: {
-		amount: Uint128;
-		denom: string;
-	};
+  token: {
+    amount: Uint128;
+    denom: string;
+  };
 };
 export type Uint128 = string;
 export interface QueryRewardsResponse {
-	claimed: boolean;
-	rewards: PrReward[];
+  claimed: boolean;
+  rewards: PrReward[];
 }

@@ -48,7 +48,7 @@ export async function claimReward({
     const match = contribution.prUrl.match(prUrlRegex);
     if (!match) {
       throw new Error(
-        "Invalid GitHub PR URL. Must be a pull request link like https://github.com/org/repo/pull/123"
+        "Invalid GitHub PR URL. Must be a pull request link like https://github.com/org/repo/pull/123",
       );
     }
 
@@ -69,22 +69,14 @@ export async function claimReward({
     const offlineSigner = window.getOfflineSigner?.("pion-1");
     if (!offlineSigner) throw new Error("No signer available");
 
-    const signingClient = await SigningCosmWasmClient.connectWithSigner(
-      rpcUrl,
-      offlineSigner,
-      {
-        gasPrice: {
-          denom: "untrn",
-          amount: Decimal.fromUserInput("0.025", 3),
-        },
-      }
-    );
+    const signingClient = await SigningCosmWasmClient.connectWithSigner(rpcUrl, offlineSigner, {
+      gasPrice: {
+        denom: "untrn",
+        amount: Decimal.fromUserInput("0.025", 3),
+      },
+    });
 
-    const lazydevClient = new LazydevClient(
-      signingClient,
-      keplrWalletAddress,
-      contractAddress
-    );
+    const lazydevClient = new LazydevClient(signingClient, keplrWalletAddress, contractAddress);
 
     const txResult = await lazydevClient.rewardPr({ proof: proofData });
 
@@ -97,8 +89,7 @@ export async function claimReward({
     setSuccessfullClaim(true);
     toast.success("Reward claimed successfully!");
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
     if (errorMessage.includes("already been rewarded")) {
       setClaimedPrs((prev) => new Set([...prev, contribution.prUrl]));

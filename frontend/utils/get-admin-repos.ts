@@ -19,7 +19,7 @@ export async function getAdminRepos(
   page: number = 1,
   perPage: number = 100,
   sort: SortField = "updated",
-  direction: SortDirection = "desc"
+  direction: SortDirection = "desc",
 ) {
   try {
     const response = await fetch(
@@ -29,7 +29,7 @@ export async function getAdminRepos(
           Accept: "application/vnd.github.v3+json",
           Authorization: `token ${accessToken}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -37,18 +37,13 @@ export async function getAdminRepos(
     }
 
     const repos: GithubRepo[] = await response.json();
-    const filteredRepos = repos.filter(
-      (repo) => !repo.private && repo.permissions?.admin
-    );
+    const filteredRepos = repos.filter((repo) => !repo.private && repo.permissions?.admin);
 
     const linkHeader = response.headers.get("link") || "";
     const hasNextPage = linkHeader.includes('rel="next"');
     const hasPreviousPage = linkHeader.includes('rel="prev"');
 
-    const totalCount = parseInt(
-      response.headers.get("x-total-count") || "0",
-      10
-    );
+    const totalCount = parseInt(response.headers.get("x-total-count") || "0", 10);
 
     return {
       data: filteredRepos,

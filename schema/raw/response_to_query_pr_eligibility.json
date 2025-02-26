@@ -1,21 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"title": "PrEligibility",
-	"oneOf": [
-		{
-			"description": "The PR has already been claimed.",
-			"type": "string",
-			"enum": ["claimed"]
-		},
-		{
-			"description": "The PR is eligble for rewards.",
-			"type": "string",
-			"enum": ["eligible"]
-		},
-		{
-			"description": "The PR is not eligible for rewards, either because the user has not yet linked their account or the repo is not configured for rewards.",
-			"type": "string",
-			"enum": ["ineligible"]
-		}
-	]
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PrEligibility",
+  "oneOf": [
+    {
+      "description": "The PR has already been claimed.",
+      "type": "string",
+      "enum": ["claimed"]
+    },
+    {
+      "description": "The PR is eligble for rewards.",
+      "type": "string",
+      "enum": ["eligible"]
+    },
+    {
+      "description": "The PR is not eligible for rewards, either because the user has not yet linked their account or the repo is not configured for rewards.",
+      "type": "string",
+      "enum": ["ineligible"]
+    }
+  ]
 }

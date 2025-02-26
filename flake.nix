@@ -212,11 +212,19 @@
               };
               biome = {
                 enable = true;
-                # package = unstablePkgs.biome;
+                package = pkgs.biome;
               };
               mdformat = {
                 enable = true;
               };
+            };
+            settings = {
+              options = [
+                "format"
+                "--write"
+                "--config-path"
+                ./biome.json
+              ];
             };
           };
 
@@ -226,9 +234,12 @@
             packages = [
               pkgs.binaryen
               pkgs.nodejs
-              # rustToolchain
+              pkgs.biome
               pkgs.taplo
             ];
+            nativeBuildInputs = [
+              config.treefmt.build.wrapper
+            ] ++ (dbg lib.attrsets.attrValues config.treefmt.build.programs);
           };
         };
     };

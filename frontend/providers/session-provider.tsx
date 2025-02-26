@@ -6,14 +6,14 @@ import { Session } from "next-auth";
 import { KeplrWalletProvider } from "./kepler-context";
 
 interface Props {
-	children: ReactNode;
-	session: Session | null;
+  children: ReactNode;
+  session: Session | null;
 }
 
 export function Providers({ children, session }: Props) {
-	return (
-		<SessionProvider session={session}>
-			<KeplrWalletProvider>{children}</KeplrWalletProvider>
-		</SessionProvider>
-	);
+  return (
+    <SessionProvider session={session}>
+      <KeplrWalletProvider>{children}</KeplrWalletProvider>
+    </SessionProvider>
+  );
 }
