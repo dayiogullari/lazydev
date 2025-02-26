@@ -239,7 +239,7 @@
             ];
             nativeBuildInputs = [
               config.treefmt.build.wrapper
-            ] ++ (dbg lib.attrsets.attrValues config.treefmt.build.programs);
+            ] ++ (lib.attrsets.attrValues config.treefmt.build.programs);
           };
         };
     };
