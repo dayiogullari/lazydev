@@ -163,7 +163,6 @@ app.post("/proof-repo-owner", async (req, res) => {
   // The repo information and the access token to make the permisson call.
   const repoOwner = req.body.repoOwner;
   const repo = req.body.repo;
-  const githubUsername = req.body.githubUsername;
   const accessToken = req.body.accessToken;
 
   if (!repo || !repoOwner || !githubUsername || !accessToken)
