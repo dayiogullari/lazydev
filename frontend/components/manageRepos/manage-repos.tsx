@@ -32,7 +32,6 @@ interface Session {
     githubUsername?: string | null;
   };
   accessToken: string;
-  accessInstallationToken?: string;
 }
 
 interface AdminRepo {

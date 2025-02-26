@@ -123,7 +123,7 @@ export const repoHelpers = {
             repoOwner: org,
             repo: repoName,
             githubUsername: session.user.githubUsername,
-            accessToken: session.accessInstallationToken,
+            accessToken: session.accessToken,
           }),
         }
       );

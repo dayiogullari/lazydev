@@ -13,7 +13,6 @@ interface Session {
     githubUsername?: string | null;
   };
   accessToken: string;
-  accessInstallationToken?: string;
 }
 
 export interface CommitRepoParams {
@@ -92,7 +91,7 @@ export const linkRepository = async ({
           repoOwner: repoData.org,
           repo: repoData.repo,
           githubUsername: session.user.githubUsername,
-          accessToken: session.accessInstallationToken,
+          accessToken: session.accessToken,
         }),
       })
         .then((res) => res.json())
