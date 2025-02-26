@@ -41,6 +41,7 @@ export const authOptions: NextAuthOptions = {
         url: "https://github.com/login/oauth/authorize",
         params: {
           scope: "read:user user:email repo",
+          installation_id: process.env.GITHUB_APP_INSTALLATION_ID,
         },
       },
       token: "https://github.com/login/oauth/access_token",
@@ -123,6 +124,9 @@ export const authOptions: NextAuthOptions = {
         },
         accessToken: token.accessToken as string,
         accessInstallationToken: token.accessInstallationToken as string,
+        expires: new Date(
+          token.accessInstallationTokenExpires as number
+        ).toISOString(),
       };
     },
   },
