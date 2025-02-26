@@ -141,7 +141,6 @@
             let
               lazydev-schema = craneLib.buildPackage {
                 src = craneLib.cleanCargoSource ./.;
-                cargoExtraArgs = "-p lazydev-token-reward";
                 strictDeps = true;
                 CARGO_PROFILE = "dev";
                 doCheck = false;
@@ -149,6 +148,7 @@
               };
               lazydev-token-reward-schema = craneLib.buildPackage {
                 src = craneLib.cleanCargoSource ./.;
+                cargoExtraArgs = "-p lazydev-token-reward";
                 strictDeps = true;
                 CARGO_PROFILE = "dev";
                 doCheck = false;
