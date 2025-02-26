@@ -34,8 +34,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: (_origin, callback) => callback(null, true),
-  }),
+    origin: "https://lazydev.zone" 
+  })
 );
 const server = http.createServer(app);
 
@@ -163,7 +163,7 @@ app.post("/proof-repo-owner", async (req, res) => {
   const repo = req.body.repo;
   const accessToken = req.body.accessToken;
 
-  if (!repo || !repoOwner || !githubUsername || !accessToken)
+  if (!repo || !repoOwner || !accessToken)
     return res.status(400).json({ message: "bad_request" });
 
   //configuring the zkTLS proof request.
