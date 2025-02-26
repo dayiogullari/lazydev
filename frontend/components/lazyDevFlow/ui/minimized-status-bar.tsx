@@ -34,18 +34,20 @@ export default function MinimizedStatusBar({
           {currentStep === "waiting"
             ? "Processing Transaction..."
             : currentStep === "link"
-              ? "Ready to Link"
-              : currentStep === "complete"
-                ? "Verification Complete"
-                : keplrWalletAddress
-                  ? "Commit GitHub ID"
-                  : "Connect Wallet"}
+            ? "Ready to Link"
+            : currentStep === "complete"
+            ? "Verification Complete"
+            : keplrWalletAddress
+            ? "Commit GitHub ID"
+            : "Connect Wallet"}
         </span>
       </div>
 
       {(commitTxHash || linkTxHash) && (
         <Link
-          href={`https://neutron.celat.one/pion-1/txs/${commitTxHash || linkTxHash}`}
+          href={`https://neutron.celat.one/pion-1/txs/${
+            commitTxHash || linkTxHash
+          }`}
           target="_blank"
           rel="noreferrer"
           className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1.5 bg-zinc-800/50 px-2 py-1 rounded-lg mr-8"

@@ -1,7 +1,7 @@
 function ShareProfileButton() {
   const handleShare = () => {
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      "Check out my open-source contributions on LazyDev! #LazyDev",
+      "Check out my open-source contributions on LazyDev! #LazyDev"
     )}`;
     window.open(shareUrl, "_blank", "noopener,noreferrer");
   };

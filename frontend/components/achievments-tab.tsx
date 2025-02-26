@@ -81,13 +81,20 @@ function AchievementsTab() {
                 )}
               </div>
 
-              <p className={`text-sm ${ach.unlocked ? "text-zinc-300" : "text-zinc-500"}`}>
+              <p
+                className={`text-sm ${
+                  ach.unlocked ? "text-zinc-300" : "text-zinc-500"
+                }`}
+              >
                 {ach.description}
               </p>
 
               {!ach.unlocked && (
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-800">
-                  <motion.div className="h-full bg-emerald-500/20" style={{ width: "30%" }} />
+                  <motion.div
+                    className="h-full bg-emerald-500/20"
+                    style={{ width: "30%" }}
+                  />
                 </div>
               )}
             </div>

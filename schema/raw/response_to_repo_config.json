@@ -16,7 +16,11 @@
     },
     "LabelConfig": {
       "type": "object",
-      "required": ["label_id", "reward_config", "reward_contract"],
+      "required": [
+        "label_id",
+        "reward_config",
+        "reward_contract"
+      ],
       "properties": {
         "label_id": {
           "description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
@@ -41,7 +45,9 @@
     },
     "RepoConfig": {
       "type": "object",
-      "required": ["label_configs"],
+      "required": [
+        "label_configs"
+      ],
       "properties": {
         "label_configs": {
           "description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",

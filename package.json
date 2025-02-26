@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@cosmwasm/ts-codegen": "^1.12.1"
+  }
+}

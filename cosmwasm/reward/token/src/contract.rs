@@ -13,7 +13,7 @@ use sha2::{Digest, Sha256};
 use crate::{
     error::Error,
     msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg},
-    state::{ADMIN, ALLOWED_ORGS, ALLOWED_REPOS, CLAIMED_REWARDS, LAZYDEV_ADDR, TOKEN_ADDR},
+    state::{ADMIN, CLAIMED_REWARDS, LAZYDEV_ADDR, TOKEN_ADDR},
 };
 
 #[entry_point]
@@ -30,14 +30,6 @@ pub fn instantiate(
 
     LAZYDEV_ADDR
         .save(deps.storage, &msg.lazydev_address)
-        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-
-    ALLOWED_REPOS
-        .save(deps.storage, &msg.config.valid_repos)
-        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-
-    ALLOWED_ORGS
-        .save(deps.storage, &msg.config.valid_orgs)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
     let salt = Sha256::new()
@@ -101,19 +93,20 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
             recipient_address: _,
             reward_config,
         }) => {
-            let response = match CLAIMED_REWARDS.may_load(deps.storage, (pr_id, repo))? {
-                Some(claimed_rewards) => QueryRewardsResponse {
-                    claimed: true,
-                    rewards: vec![claimed_rewards],
-                },
-                None => QueryRewardsResponse {
-                    claimed: false,
-                    rewards: vec![PrReward::Token {
-                        denom: TOKEN_ADDR.load(deps.storage)?.to_string(),
-                        amount: reward_config.parse()?,
-                    }],
-                },
-            };
+            let response =
+                match CLAIMED_REWARDS.may_load(deps.storage, (pr_id, repo.org, repo.repo))? {
+                    Some(claimed_rewards) => QueryRewardsResponse {
+                        claimed: true,
+                        rewards: vec![claimed_rewards],
+                    },
+                    None => QueryRewardsResponse {
+                        claimed: false,
+                        rewards: vec![PrReward::Token {
+                            denom: TOKEN_ADDR.load(deps.storage)?.to_string(),
+                            amount: reward_config.parse()?,
+                        }],
+                    },
+                };
 
             Ok(to_json_binary(&response)?)
         }
@@ -152,22 +145,10 @@ pub fn execute(
                 .parse::<Uint128>()
                 .map_err(Error::InvalidConfig)?;
 
-            ensure!(
-                ALLOWED_ORGS
-                    .load(deps.storage)
-                    .expect(STORAGE_ACCESS_INFALLIBLE_MSG)
-                    .contains(&repo.org)
-                    || ALLOWED_REPOS
-                        .load(deps.storage)
-                        .expect(STORAGE_ACCESS_INFALLIBLE_MSG)
-                        .contains(&repo),
-                Error::OnlyLazydev
-            );
-
             CLAIMED_REWARDS
                 .save(
                     deps.storage,
-                    (pr_id, repo),
+                    (pr_id, repo.org, repo.repo),
                     &PrReward::Token {
                         denom: cw20_token_addr.to_string(),
                         amount: reward_amount,

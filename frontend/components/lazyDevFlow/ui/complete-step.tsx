@@ -7,7 +7,11 @@ interface CompleteStepProps {
   children?: React.ReactNode;
 }
 
-export function CompleteStep({ githubUserName, keplrWalletAddress, children }: CompleteStepProps) {
+export function CompleteStep({
+  githubUserName,
+  keplrWalletAddress,
+  children,
+}: CompleteStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -63,7 +67,8 @@ export function CompleteStep({ githubUserName, keplrWalletAddress, children }: C
             Verification Complete!
           </h3>
           <p className="text-slate-400 text-sm">
-            Your GitHub identity is now cryptographically linked to your wallet address.
+            Your GitHub identity is now cryptographically linked to your wallet
+            address.
           </p>
         </div>
 
@@ -89,7 +94,12 @@ export function CompleteStep({ githubUserName, keplrWalletAddress, children }: C
 
           <div className="h-8 flex items-center">
             <motion.div className="text-green-400">
-              <svg width="20" height="8" viewBox="0 0 20 8" fill="none">
+              <svg
+                width="20"
+                height="8"
+                viewBox="0 0 20 8"
+                fill="none"
+              >
                 <path
                   d="M19.3536 4.35355C19.5488 4.15829 19.5488 3.84171 19.3536 3.64645L16.1716 0.464466C15.9763 0.269204 15.6597 0.269204 15.4645 0.464466C15.2692 0.659728 15.2692 0.976311 15.4645 1.17157L18.2929 4L15.4645 6.82843C15.2692 7.02369 15.2692 7.34027 15.4645 7.53553C15.6597 7.7308 15.9763 7.7308 16.1716 7.53553L19.3536 4.35355ZM0 4.5H19V3.5H0V4.5Z"
                   fill="currentColor"
@@ -104,7 +114,9 @@ export function CompleteStep({ githubUserName, keplrWalletAddress, children }: C
                 <Wallet className="w-5 h-5 text-slate-300" />
               </div>
               <div className="flex-1 text-left">
-                <div className="text-xs text-slate-400 font-medium">Keplr Wallet</div>
+                <div className="text-xs text-slate-400 font-medium">
+                  Keplr Wallet
+                </div>
                 <div className="text-sm font-mono text-slate-200 truncate">
                   {keplrWalletAddress?.substring(0, 8)}...
                   {keplrWalletAddress?.substring(keplrWalletAddress.length - 6)}

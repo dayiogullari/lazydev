@@ -11,9 +11,9 @@ export interface InstantiateMsg {
   verifier_address: Addr;
 }
 export type ExecuteMsg = {
-  commit_account: CommitAccountMsg;
-} | {
   link_account: LinkAccountMsg;
+} | {
+  commit_github_user_id: CommitGithubUserIdMsg;
 } | {
   reward_pr: RewardPrMsg;
 } | {
@@ -22,11 +22,6 @@ export type ExecuteMsg = {
   link_repo: LinkRepoMsg;
 };
 export type Binary = string;
-export interface CommitAccountMsg {
-  commitment_key: Binary;
-  github_user_id: number;
-  recipient_address: Addr;
-}
 export interface LinkAccountMsg {
   proof: Proof;
   recipient_address: Addr;
@@ -51,21 +46,17 @@ export interface CompleteClaimData {
   owner: string;
   timestampS: number;
 }
+export interface CommitGithubUserIdMsg {
+  commitment_key: Binary;
+  github_user_id: number;
+  recipient_address: Addr;
+}
 export interface RewardPrMsg {
   proof: Proof;
 }
 export interface CommitRepoMsg {
   commitment_key: Binary;
-  config: RepoConfig;
   repo: Repo;
-}
-export interface RepoConfig {
-  label_configs: LabelConfig[];
-}
-export interface LabelConfig {
-  label_id: number;
-  reward_config: string;
-  reward_contract: Addr;
 }
 export interface Repo {
   org: string;
@@ -74,9 +65,9 @@ export interface Repo {
 export interface LinkRepoMsg {
   config: RepoConfig;
   repo: Repo;
-  repo_admin_permissions_proof: Proof;
-  repo_admin_user_proof: Proof;
-  secret: Binary;
+}
+export interface RepoConfig {
+  label_configs: {};
 }
 export type QueryMsg = {
   linked_address: {
@@ -84,10 +75,6 @@ export type QueryMsg = {
   };
 } | {
   repos: {};
-} | {
-  repo_config: {
-    repo: Repo;
-  };
 } | {
   query_pr_eligibility: {
     github_user_id: number;
@@ -97,6 +84,5 @@ export type QueryMsg = {
 };
 export interface MigrateMsg {}
 export type NullableAddr = Addr | null;
-export type PrEligibility = "claimed" | "eligible" | "ineligible";
-export type NullableRepoConfig = RepoConfig | null;
+export type Boolean = boolean;
 export type ArrayOfRepo = Repo[];

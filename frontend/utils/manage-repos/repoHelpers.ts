@@ -11,7 +11,6 @@ interface Label {
 interface RepoDetails extends AdminRepo {
   labels: Label[];
 }
-
 interface AdminRepo {
   id: number;
   name: string;
@@ -21,32 +20,11 @@ interface AdminRepo {
   createdAt: string;
 }
 
-export interface PaginationInfo {
-  page: number;
-  perPage: number;
-  totalCount: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
 export const fetchAdminRepos = async (
-  accessToken: string,
-  page: number = 1,
-  perPage: number = 100,
-): Promise<{ repos: AdminRepo[]; pagination: PaginationInfo }> => {
-  const response = await getAdminRepos(accessToken, page, perPage);
-
-  const githubRepos = response.data || [];
-
-  const paginationInfo = response.pagination || {
-    page,
-    perPage,
-    totalCount: githubRepos.length,
-    hasNextPage: false,
-    hasPreviousPage: page > 1,
-  };
-
-  const repos = githubRepos.map((repo) => ({
+  accessToken: string
+): Promise<AdminRepo[]> => {
+  const githubRepos = await getAdminRepos(accessToken);
+  return githubRepos.map((repo) => ({
     id: repo.id,
     name: repo.name,
     fullName: repo.full_name,
@@ -54,16 +32,11 @@ export const fetchAdminRepos = async (
     description: repo.description,
     createdAt: repo.created_at,
   }));
-
-  return {
-    repos,
-    pagination: paginationInfo,
-  };
 };
 
 export const fetchRepoDetails = async (
   repoId: number,
-  accessToken: string,
+  accessToken: string
 ): Promise<RepoDetails> => {
   return await getRepoDetails(repoId, accessToken);
 };

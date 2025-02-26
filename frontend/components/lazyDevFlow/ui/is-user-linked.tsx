@@ -9,7 +9,10 @@ interface UserLinkedProps {
   keplrWalletAddress: string;
 }
 
-export function UserLinked({ githubUserName, keplrWalletAddress }: UserLinkedProps) {
+export function UserLinked({
+  githubUserName,
+  keplrWalletAddress,
+}: UserLinkedProps) {
   const [isClicked, setIsClicked] = useState(false);
   const handleCopyAddress = (address: string) => {
     setIsClicked(true);
@@ -32,7 +35,10 @@ export function UserLinked({ githubUserName, keplrWalletAddress }: UserLinkedPro
         <div className="px-3 py-1.5 bg-[#111113] rounded-lg border border-slate-700/50 text-xs text-white font-mono flex gap-2 justify-center items-center">
           {keplrWalletAddress?.substring(0, 6)}...
           {keplrWalletAddress?.substring(keplrWalletAddress.length - 4)}
-          <button className="relative" onClick={() => handleCopyAddress(keplrWalletAddress)}>
+          <button
+            className="relative"
+            onClick={() => handleCopyAddress(keplrWalletAddress)}
+          >
             {isClicked && (
               <motion.h1
                 className="absolute -right-6 bg-[#27272A]/10 rounded-full px-2 py-1 text-xs text-white"

@@ -40,6 +40,7 @@ export interface Session {
     githubUsername?: string | null;
   };
   accessToken: string;
+  accessInstallationToken?: string;
 }
 
 export interface RepoDetailsProps {

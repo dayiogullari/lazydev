@@ -14,7 +14,10 @@ interface ApiBalanceResponse {
   totalChange24h: number;
 }
 
-export function useTokenBalances(walletAddress?: string, refreshInterval?: number) {
+export function useTokenBalances(
+  walletAddress?: string,
+  refreshInterval?: number
+) {
   const [balances, setBalances] = useState<TokenInfo[]>([]);
   const [totalUsdValue, setTotalUsdValue] = useState<number>(0);
   const [totalChange24h, setTotalChange24h] = useState<number>(0);
@@ -109,7 +112,7 @@ export function useTokenBalances(walletAddress?: string, refreshInterval?: numbe
 export function formatTokenAmount(
   amount: number,
   symbol?: string,
-  includeSymbol: boolean = true,
+  includeSymbol: boolean = true
 ): string {
   let formattedAmount: string;
 

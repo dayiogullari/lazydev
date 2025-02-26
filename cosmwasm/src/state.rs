@@ -1,6 +1,6 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Addr, Binary};
-use cw_storage_plus::{Item, Key, KeyDeserialize, Map, PrimaryKey};
+use cosmwasm_std::Addr;
+use cw_storage_plus::{Item, Map};
 
 #[cw_serde]
 pub struct Config {
@@ -9,8 +9,10 @@ pub struct Config {
     pub commitment_delay_max_height: u64,
 }
 
+// Define the singleton state as a global constant using Item
 pub const CONFIG: Item<Config> = Item::new("config");
 
+// Define the singleton state as a global constant using Item
 pub const USERS: Map<u64, Addr> = Map::new("users");
 
 /// Set of already submitted proofs, used to prevent replay attacks.
@@ -18,82 +20,42 @@ pub const USERS: Map<u64, Addr> = Map::new("users");
 /// sha256(json(proof))
 pub const EXISTING_PROOFS: Map<Vec<u8>, ()> = Map::new("existing_proofs");
 
-/// User commitments, keyed by the github user id of the user attempting to link their account.
-///
-/// The commitment value is the intended recipient address.
-pub const USER_COMMITMENTS: Map<u64, Commitment<Addr>> = Map::new("user_commitments");
+/// User commitments, keyed by the sha256 of the secret and the github user id.
+// TODO: REMOVE USER ID?
+pub const USER_COMMITMENTS: Map<(Vec<u8>, u64), UserCommitment> = Map::new("user_commitments");
 
-/// Repo commitments, keyed by the repo being configured.
-///
-/// The commitment value is the intended repo config.
-pub const REPO_COMMITMENTS: Map<Repo, Commitment<RepoConfig>> = Map::new("repo_commitments");
+pub const REPO_COMMITMENTS: Map<Vec<u8>, RepoCommitment> = Map::new("repo_commitments");
 
 /// `(org, repo)`
 pub const REPOS: Map<(String, String), RepoConfig> = Map::new("repos");
 
-/// Pull requests that have already been rewarded.
-///
 /// `(org, repo, pr_id)`
 pub const REWARDED_PRS: Map<(String, String, u64), ()> = Map::new("rewarded_prs");
 
 #[cw_serde]
-pub struct Commitment<T> {
-    /// The sha256(secret) hash that will be revealed in when submitting the proof.
-    pub commitment_key: Binary,
+pub struct UserCommitment {
+    /// The github user id of the user attempting to link their account.
+    pub github_user_id: u64,
+    /// The intended recipient address.
+    pub recipient_address: Addr,
     /// The height that the commitment was stored at.
     pub commitment_height: u64,
-    /// The value that will be committed.
-    pub value: T,
+}
+
+#[cw_serde]
+pub struct RepoCommitment {
+    /// The repo being committed.
+    pub repo: Repo,
+    /// The intended config.
+    pub config: RepoConfig,
+    /// The height that the commitment was stored at.
+    pub commitment_height: u64,
 }
 
 #[cw_serde]
 pub struct Repo {
     pub org: String,
     pub repo: String,
-}
-
-impl<'a> PrimaryKey<'a> for Repo {
-    type Prefix = <(String, String) as PrimaryKey<'a>>::Prefix;
-
-    type SubPrefix = <(String, String) as PrimaryKey<'a>>::SubPrefix;
-
-    type Suffix = <(String, String) as PrimaryKey<'a>>::Suffix;
-
-    type SuperSuffix = <(String, String) as PrimaryKey<'a>>::SuperSuffix;
-
-    fn key(&self) -> Vec<Key> {
-        // copied from the tuple impl bc this trait is stupid
-        let mut keys = self.org.key();
-        keys.extend(self.repo.key());
-        keys
-    }
-}
-
-impl KeyDeserialize for Repo {
-    type Output = Repo;
-
-    const KEY_ELEMS: u16 = <(String, String) as KeyDeserialize>::KEY_ELEMS;
-
-    fn from_vec(value: Vec<u8>) -> cosmwasm_std::StdResult<Self::Output> {
-        let (org, repo) = <(String, String) as KeyDeserialize>::from_vec(value)?;
-
-        Ok(Self { org, repo })
-    }
-}
-
-impl<T: Into<String>, U: Into<String>> From<(T, U)> for Repo {
-    fn from((org, repo): (T, U)) -> Self {
-        Self {
-            org: org.into(),
-            repo: repo.into(),
-        }
-    }
-}
-
-impl From<Repo> for (String, String) {
-    fn from(repo: Repo) -> Self {
-        (repo.org, repo.repo)
-    }
 }
 
 #[cw_serde]

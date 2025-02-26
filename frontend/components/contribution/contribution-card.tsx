@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { FaGithub, FaCheckCircle, FaTimesCircle, FaExternalLinkAlt } from "react-icons/fa";
+import {
+  FaGithub,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 import { ArrowRight, Loader2 } from "lucide-react";
 interface Contribution {
   prUrl: string;
@@ -88,7 +93,10 @@ export function ContributionCard({
             </p>
           </div>
 
-          <div className="flex items-center gap-3 self-center" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="flex items-center gap-3 self-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="hidden md:flex items-center text-green-400/50 group-hover:text-green-400 transition-colors">
               {!errorState?.isAlreadyClaimed && (
                 <motion.div className="flex items-center gap-2">
@@ -102,7 +110,11 @@ export function ContributionCard({
                     "Claim reward"
                   )}
 
-                  {isClaiming ? <Loader2 className="animate-spin size-5" /> : <ArrowRight />}
+                  {isClaiming ? (
+                    <Loader2 className="animate-spin size-5" />
+                  ) : (
+                    <ArrowRight />
+                  )}
                 </motion.div>
               )}
             </div>

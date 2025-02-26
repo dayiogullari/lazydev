@@ -39,7 +39,11 @@ export function StepProgressBar({ steps, currentStep }: StepProgressBarProps) {
             <motion.div
               className={`
                 relative w-2 h-2 rounded-full transition-colors duration-200 border-2
-                ${isActive ? "bg-emerald-400 border-emerald-400" : "bg-zinc-900 border-zinc-700"}
+                ${
+                  isActive
+                    ? "bg-emerald-400 border-emerald-400"
+                    : "bg-zinc-900 border-zinc-700"
+                }
                 ${isCurrentStep ? "ring-2 ring-emerald-400/20" : ""}
               `}
               initial={{ scale: 0.8 }}

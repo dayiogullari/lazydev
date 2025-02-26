@@ -15,7 +15,11 @@ import {
 
 import { checkIfGithubLinked } from "@/utils/check-github-link";
 
-import { handleConnectWallet, handleCommitStep, handleLinkStep } from "@/utils/lazydev-helpers";
+import {
+  handleConnectWallet,
+  handleCommitStep,
+  handleLinkStep,
+} from "@/utils/lazydev-helpers";
 import MinimizedStatusBar from "./ui/minimized-status-bar";
 import { UserLinked } from "./ui/is-user-linked";
 import { StepProgressBar } from "./ui/step-progress-bar";
@@ -29,7 +33,10 @@ interface LazydevInteractionProps {
 // "connect" |
 type FlowStep = "commit" | "waiting" | "link" | "complete";
 
-export default function LazydevInteraction({ rpcUrl, contractAddress }: LazydevInteractionProps) {
+export default function LazydevInteraction({
+  rpcUrl,
+  contractAddress,
+}: LazydevInteractionProps) {
   const { data: session } = useSession();
   const { keplrWalletAddress, connectKeplrWallet } = useKeplrWallet();
 
@@ -155,7 +162,11 @@ export default function LazydevInteraction({ rpcUrl, contractAddress }: LazydevI
             onClick={() => setIsMinimized(!isMinimized)}
             className="absolute top-2 right-4 z-20 p-2 rounded-md text-slate-300 hover:text-slate-100 hover:bg-zinc-800/30 transition-colors"
           >
-            {isMinimized ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+            {isMinimized ? (
+              <ChevronDown className="w-4 h-4" />
+            ) : (
+              <ChevronUp className="w-4 h-4" />
+            )}
           </motion.button>
         )}
 
@@ -184,7 +195,9 @@ export default function LazydevInteraction({ rpcUrl, contractAddress }: LazydevI
                     className="flex items-center justify-center gap-2 text-slate-400"
                   >
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-sm">Checking GitHub connection...</span>
+                    <span className="text-sm">
+                      Checking GitHub connection...
+                    </span>
                   </motion.div>
                 ) : isLinked ? (
                   <UserLinked
@@ -276,7 +289,10 @@ function GitHubVerificationFlow({
               <span>GitHub Verification</span>
             </h2>
 
-            <StepProgressBar steps={steps} currentStep={currentStep || ""} />
+            <StepProgressBar
+              steps={steps}
+              currentStep={currentStep || ""}
+            />
           </motion.div>
         )}
       </AnimatePresence>

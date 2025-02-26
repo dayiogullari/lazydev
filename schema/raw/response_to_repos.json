@@ -8,7 +8,10 @@
   "definitions": {
     "Repo": {
       "type": "object",
-      "required": ["org", "repo"],
+      "required": [
+        "org",
+        "repo"
+      ],
       "properties": {
         "org": {
           "type": "string"

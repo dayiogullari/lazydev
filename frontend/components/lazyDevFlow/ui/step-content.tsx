@@ -30,7 +30,8 @@ export function StepContent({
   const buttonStyles = {
     primary: "bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-300",
     github: "bg-slate-800 hover:bg-slate-700 text-white",
-    wallet: "bg-indigo-900/50 hover:bg-indigo-800/50 text-white border border-indigo-700/30",
+    wallet:
+      "bg-indigo-900/50 hover:bg-indigo-800/50 text-white border border-indigo-700/30",
     disabled: "bg-slate-800/50 text-slate-400 cursor-not-allowed",
   };
 
@@ -58,7 +59,9 @@ export function StepContent({
         onClick={onClick}
         disabled={isLoading || buttonStyle === "disabled"}
         className={`relative px-6 py-3 rounded-lg flex items-center gap-2 font-medium transition-all duration-200 ${
-          buttonStylesCustome ? buttonStylesCustome : buttonStyles[buttonStyle || "primary"]
+          buttonStylesCustome
+            ? buttonStylesCustome
+            : buttonStyles[buttonStyle || "primary"]
         } `}
       >
         {isLoading && <Loader2 className="w-6 h-6 animate-spin" />}

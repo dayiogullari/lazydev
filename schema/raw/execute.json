@@ -4,7 +4,9 @@
   "oneOf": [
     {
       "type": "object",
-      "required": ["commit_account"],
+      "required": [
+        "commit_account"
+      ],
       "properties": {
         "commit_account": {
           "$ref": "#/definitions/CommitAccountMsg"
@@ -14,7 +16,9 @@
     },
     {
       "type": "object",
-      "required": ["link_account"],
+      "required": [
+        "link_account"
+      ],
       "properties": {
         "link_account": {
           "$ref": "#/definitions/LinkAccountMsg"
@@ -24,7 +28,9 @@
     },
     {
       "type": "object",
-      "required": ["reward_pr"],
+      "required": [
+        "reward_pr"
+      ],
       "properties": {
         "reward_pr": {
           "$ref": "#/definitions/RewardPrMsg"
@@ -34,7 +40,9 @@
     },
     {
       "type": "object",
-      "required": ["commit_repo"],
+      "required": [
+        "commit_repo"
+      ],
       "properties": {
         "commit_repo": {
           "$ref": "#/definitions/CommitRepoMsg"
@@ -44,7 +52,9 @@
     },
     {
       "type": "object",
-      "required": ["link_repo"],
+      "required": [
+        "link_repo"
+      ],
       "properties": {
         "link_repo": {
           "$ref": "#/definitions/LinkRepoMsg"
@@ -64,7 +74,11 @@
     },
     "ClaimInfo": {
       "type": "object",
-      "required": ["context", "parameters", "provider"],
+      "required": [
+        "context",
+        "parameters",
+        "provider"
+      ],
       "properties": {
         "context": {
           "type": "string"
@@ -81,7 +95,11 @@
     "CommitAccountMsg": {
       "description": "Commit to linking an address with a proof in a future message.\n\nIn order to prevent a user proof being frontrun and assigned to a different recipient address, linking an account is done in two steps via a commit/reveal scheme (inspired by [ens]). A secret is generated client side, and then the sha256 sum of this secret is committed as the key to the (id, addr) that will later be linked. Once this is committed on chain, the client can then read the commitment and ensure that it was indeed committed as expected (i.e. that it was not frontrun), and then submit a [`LinkAccount`] transaction which itself contains the the zktls proof for the user account, along with the raw secret. Since only one commitement can be submitted per github user id (see [`USER_COMMITMENTS`][crate::state::USER_COMMITEMENTS]), it is not possible for this link account message proof to be frontrun.\n\n[ens]: https://support.ens.domains/en/articles/7900438-registration-steps",
       "type": "object",
-      "required": ["commitment_key", "github_user_id", "recipient_address"],
+      "required": [
+        "commitment_key",
+        "github_user_id",
+        "recipient_address"
+      ],
       "properties": {
         "commitment_key": {
           "description": "sha256(secret)",
@@ -111,7 +129,11 @@
     "CommitRepoMsg": {
       "description": "Commit to linking a repository as a repo admin.\n\nLinking a repo uses the same commit/reveal schema as [`CommitAccountMsg`].",
       "type": "object",
-      "required": ["commitment_key", "config", "repo"],
+      "required": [
+        "commitment_key",
+        "config",
+        "repo"
+      ],
       "properties": {
         "commitment_key": {
           "description": "sha256(secret)",
@@ -142,7 +164,12 @@
     },
     "CompleteClaimData": {
       "type": "object",
-      "required": ["epoch", "identifier", "owner", "timestampS"],
+      "required": [
+        "epoch",
+        "identifier",
+        "owner",
+        "timestampS"
+      ],
       "properties": {
         "epoch": {
           "type": "integer",
@@ -165,7 +192,11 @@
     },
     "LabelConfig": {
       "type": "object",
-      "required": ["label_id", "reward_config", "reward_contract"],
+      "required": [
+        "label_id",
+        "reward_config",
+        "reward_contract"
+      ],
       "properties": {
         "label_id": {
           "description": "The id of the github pr label. Any PRs with this label will be rewarded with `reward_contract` and `reward_config`.",
@@ -191,7 +222,11 @@
     "LinkAccountMsg": {
       "description": "Link a github user id with a recipient address with a zktls proof of the user's account.\n\nThis is the second phase of the account linking (see [`CommitGithubUserId`] for more information).",
       "type": "object",
-      "required": ["proof", "recipient_address", "secret"],
+      "required": [
+        "proof",
+        "recipient_address",
+        "secret"
+      ],
       "properties": {
         "proof": {
           "description": "The zktls proof of the user account. This also contains the user id.\n\nThis proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.",
@@ -266,7 +301,10 @@
     },
     "Proof": {
       "type": "object",
-      "required": ["claimInfo", "signedClaim"],
+      "required": [
+        "claimInfo",
+        "signedClaim"
+      ],
       "properties": {
         "claimInfo": {
           "$ref": "#/definitions/ClaimInfo"
@@ -279,7 +317,10 @@
     },
     "Repo": {
       "type": "object",
-      "required": ["org", "repo"],
+      "required": [
+        "org",
+        "repo"
+      ],
       "properties": {
         "org": {
           "type": "string"
@@ -292,7 +333,9 @@
     },
     "RepoConfig": {
       "type": "object",
-      "required": ["label_configs"],
+      "required": [
+        "label_configs"
+      ],
       "properties": {
         "label_configs": {
           "description": "All of the reward configurations for this repo. A single label may have multiple configured rewards.",
@@ -307,7 +350,9 @@
     "RewardPrMsg": {
       "description": "Reward a PR with a zktls proof of the pull request.",
       "type": "object",
-      "required": ["proof"],
+      "required": [
+        "proof"
+      ],
       "properties": {
         "proof": {
           "description": "The zktls proof of the PR from github.\n\nThis proof is of the <https://api.github.com/repos/ORG/REPO/pulls/ID> endpoint. The zktls proof verifies the authenticity of the pull request state and contents, ensuring that a user cannot fabricate a PR that will give them unearned rewards.",
@@ -322,7 +367,10 @@
     },
     "SignedClaim": {
       "type": "object",
-      "required": ["claim", "signatures"],
+      "required": [
+        "claim",
+        "signatures"
+      ],
       "properties": {
         "claim": {
           "$ref": "#/definitions/CompleteClaimData"

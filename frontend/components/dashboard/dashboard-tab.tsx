@@ -4,7 +4,13 @@ import { useKeplrWallet } from "@/providers/kepler-context";
 import { claimReward } from "@/utils/claim-reward-helper";
 import { ContributionCard } from "../contribution/contribution-card";
 import { StatsCard } from "./stats-card";
-import { GitPullRequest, Loader2, RefreshCw, DollarSign, Coins } from "lucide-react";
+import {
+  GitPullRequest,
+  Loader2,
+  RefreshCw,
+  DollarSign,
+  Coins,
+} from "lucide-react";
 import DashboardWelcome from "./dashboard-welcome";
 import { useWindowSize } from "react-use";
 import Confetti from "react-confetti";
@@ -103,7 +109,9 @@ export function DashboardTab({
 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">Recent Contributions</h2>
+          <h2 className="text-xl font-semibold text-white">
+            Recent Contributions
+          </h2>
           <button
             onClick={fetchContributions}
             className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2"
@@ -129,7 +137,12 @@ export function DashboardTab({
           ))}
         </div>
         {successfullClaim && (
-          <Confetti width={width} height={height} recycle={false} numberOfPieces={200} />
+          <Confetti
+            width={width}
+            height={height}
+            recycle={false}
+            numberOfPieces={200}
+          />
         )}
       </div>
     </div>

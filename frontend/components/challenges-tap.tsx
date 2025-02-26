@@ -55,10 +55,14 @@ function ChallengesTab() {
               <div className="flex flex-col items-end">
                 <div className="flex items-center gap-2 text-yellow-400">
                   <FaCoins />
-                  <span className="font-medium">+{challenge.rewardPoints} LAZY</span>
+                  <span className="font-medium">
+                    +{challenge.rewardPoints} LAZY
+                  </span>
                 </div>
                 {challenge.completed && (
-                  <span className="text-green-400 text-sm font-medium mt-2">Completed</span>
+                  <span className="text-green-400 text-sm font-medium mt-2">
+                    Completed
+                  </span>
                 )}
               </div>
             </div>

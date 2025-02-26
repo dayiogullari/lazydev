@@ -2,7 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "QueryRewardsResponse",
   "type": "object",
-  "required": ["claimed", "rewards"],
+  "required": [
+    "claimed",
+    "rewards"
+  ],
   "properties": {
     "claimed": {
       "description": "Whether or not these rewards have already been claimed. If `true`, then `rewards` is the *actual* reward that the user received when they originally claimed the rewards.",
@@ -21,11 +24,16 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["token"],
+          "required": [
+            "token"
+          ],
           "properties": {
             "token": {
               "type": "object",
-              "required": ["amount", "denom"],
+              "required": [
+                "amount",
+                "denom"
+              ],
               "properties": {
                 "amount": {
                   "$ref": "#/definitions/Uint128"

@@ -1,4 +1,11 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 
 function ContributionChart() {
   const data = [
@@ -20,15 +27,30 @@ function ContributionChart() {
   return (
     <div className="bg-gray-900/50 rounded-xl border border-gray-700/50 p-6">
       <h2 className="text-xl font-bold mb-4">Contribution Trend</h2>
-      <LineChart width={500} height={250} data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-        <XAxis dataKey="week" stroke="#ccc" />
+      <LineChart
+        width={500}
+        height={250}
+        data={data}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="#444"
+        />
+        <XAxis
+          dataKey="week"
+          stroke="#ccc"
+        />
         <YAxis stroke="#ccc" />
         <Tooltip
           contentStyle={{ backgroundColor: "#2D2D2D", border: "none" }}
           labelStyle={{ color: "#fff" }}
         />
-        <Line type="monotone" dataKey="points" stroke="#82ca9d" strokeWidth={2} />
+        <Line
+          type="monotone"
+          dataKey="points"
+          stroke="#82ca9d"
+          strokeWidth={2}
+        />
       </LineChart>
     </div>
   );

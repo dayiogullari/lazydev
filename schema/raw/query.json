@@ -5,11 +5,15 @@
     {
       "description": "Returns the linked account of a github user, or [`None`] if the user has not yet been linked.",
       "type": "object",
-      "required": ["linked_address"],
+      "required": [
+        "linked_address"
+      ],
       "properties": {
         "linked_address": {
           "type": "object",
-          "required": ["github_user_id"],
+          "required": [
+            "github_user_id"
+          ],
           "properties": {
             "github_user_id": {
               "type": "integer",
@@ -25,7 +29,9 @@
     {
       "description": "Returns all of the configured repos.",
       "type": "object",
-      "required": ["repos"],
+      "required": [
+        "repos"
+      ],
       "properties": {
         "repos": {
           "type": "object",
@@ -37,11 +43,15 @@
     {
       "description": "Returns all of the configured repos.",
       "type": "object",
-      "required": ["repo_config"],
+      "required": [
+        "repo_config"
+      ],
       "properties": {
         "repo_config": {
           "type": "object",
-          "required": ["repo"],
+          "required": [
+            "repo"
+          ],
           "properties": {
             "repo": {
               "$ref": "#/definitions/Repo"
@@ -55,11 +65,17 @@
     {
       "description": "Returns whether a PR is eligible for rewards.",
       "type": "object",
-      "required": ["query_pr_eligibility"],
+      "required": [
+        "query_pr_eligibility"
+      ],
       "properties": {
         "query_pr_eligibility": {
           "type": "object",
-          "required": ["github_user_id", "pr_id", "repo"],
+          "required": [
+            "github_user_id",
+            "pr_id",
+            "repo"
+          ],
           "properties": {
             "github_user_id": {
               "type": "integer",
@@ -84,7 +100,10 @@
   "definitions": {
     "Repo": {
       "type": "object",
-      "required": ["org", "repo"],
+      "required": [
+        "org",
+        "repo"
+      ],
       "properties": {
         "org": {
           "type": "string"

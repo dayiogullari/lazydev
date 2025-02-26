@@ -26,15 +26,21 @@ export function ProfileTab({ session }: { session: Session | null }) {
               className="rounded-full"
             />
             <div>
-              <p className="text-lg font-medium">{session.user.name || "No Name"}</p>
+              <p className="text-lg font-medium">
+                {session.user.name || "No Name"}
+              </p>
               <p className="text-gray-400 text-sm">{session.user.email}</p>
               {session.user.githubUsername && (
-                <p className="text-gray-500 text-sm mt-1">GitHub: {session.user.githubUsername}</p>
+                <p className="text-gray-500 text-sm mt-1">
+                  GitHub: {session.user.githubUsername}
+                </p>
               )}
             </div>
           </div>
         ) : (
-          <p className="text-gray-400">You need to sign in to see your profile.</p>
+          <p className="text-gray-400">
+            You need to sign in to see your profile.
+          </p>
         )}
       </div>
       <div className="bg-gray-900/50 rounded-xl border border-gray-700/50 p-6">

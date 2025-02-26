@@ -11,12 +11,17 @@ declare module "next-auth" {
       githubUsername?: string | null;
     };
     accessToken: string;
+    accessInstallationToken?: string;
+  }
+  interface Profile {
+    login: string;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
+    accessInstallationToken?: string;
     githubUsername?: string;
   }
 }

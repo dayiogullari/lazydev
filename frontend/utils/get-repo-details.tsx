@@ -15,13 +15,19 @@ interface RepoDetails {
   labels: Label[];
 }
 
-export async function getRepoDetails(repoId: number, accessToken: string): Promise<RepoDetails> {
+export async function getRepoDetails(
+  repoId: number,
+  accessToken: string
+): Promise<RepoDetails> {
   try {
-    const repoResponse = await fetch(`https://api.github.com/repositories/${repoId}`, {
-      headers: {
-        Authorization: `token ${accessToken}`,
-      },
-    });
+    const repoResponse = await fetch(
+      `https://api.github.com/repositories/${repoId}`,
+      {
+        headers: {
+          Authorization: `token ${accessToken}`,
+        },
+      }
+    );
 
     if (!repoResponse.ok) {
       throw new Error("Failed to fetch repository");
@@ -29,11 +35,14 @@ export async function getRepoDetails(repoId: number, accessToken: string): Promi
 
     const repoData = await repoResponse.json();
 
-    const labelsResponse = await fetch(`https://api.github.com/repositories/${repoId}/labels`, {
-      headers: {
-        Authorization: `token ${accessToken}`,
-      },
-    });
+    const labelsResponse = await fetch(
+      `https://api.github.com/repositories/${repoId}/labels`,
+      {
+        headers: {
+          Authorization: `token ${accessToken}`,
+        },
+      }
+    );
 
     if (!labelsResponse.ok) {
       throw new Error("Failed to fetch labels");

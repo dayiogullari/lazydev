@@ -1,7 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useTokenBalances, formatTokenAmount, formatUsdValue } from "@/utils/balance-fetch";
+import {
+  useTokenBalances,
+  formatTokenAmount,
+  formatUsdValue,
+} from "@/utils/balance-fetch";
 import { Loader2 } from "lucide-react";
 
 interface StatsCardProps {
@@ -28,7 +32,13 @@ export function StatsCard({
   keplrWalletAddress,
 }: StatsCardProps) {
   const tokenBalances = useTokenBalances();
-  const { balances, totalUsdValue, totalChange24h, isLoading, getTokenBySymbol } = isTokenCard
+  const {
+    balances,
+    totalUsdValue,
+    totalChange24h,
+    isLoading,
+    getTokenBySymbol,
+  } = isTokenCard
     ? tokenBalances
     : {
         balances: [],
@@ -38,7 +48,9 @@ export function StatsCard({
         getTokenBySymbol: () => undefined,
       };
 
-  const [displayValue, setDisplayValue] = useState<string | number>(value || "");
+  const [displayValue, setDisplayValue] = useState<string | number>(
+    value || ""
+  );
   const [displayTrend, setDisplayTrend] = useState<string | undefined>(trend);
   const [isTrendUp, setIsTrendUp] = useState<boolean | undefined>(trendUp);
 
@@ -50,7 +62,7 @@ export function StatsCard({
           setDisplayValue(
             isUsdValue
               ? formatUsdValue(tokenData.usdValue)
-              : formatTokenAmount(tokenData.amount, tokenSymbol),
+              : formatTokenAmount(tokenData.amount, tokenSymbol)
           );
 
           if (tokenData.change24h !== undefined) {

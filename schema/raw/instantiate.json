@@ -2,7 +2,11 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "InstantiateMsg",
   "type": "object",
-  "required": ["commitment_delay_max_height", "commitment_delay_min_height", "verifier_address"],
+  "required": [
+    "commitment_delay_max_height",
+    "commitment_delay_min_height",
+    "verifier_address"
+  ],
   "properties": {
     "commitment_delay_max_height": {
       "type": "integer",

@@ -5,17 +5,23 @@
     {
       "description": "The PR has already been claimed.",
       "type": "string",
-      "enum": ["claimed"]
+      "enum": [
+        "claimed"
+      ]
     },
     {
       "description": "The PR is eligble for rewards.",
       "type": "string",
-      "enum": ["eligible"]
+      "enum": [
+        "eligible"
+      ]
     },
     {
       "description": "The PR is not eligible for rewards, either because the user has not yet linked their account or the repo is not configured for rewards.",
       "type": "string",
-      "enum": ["ineligible"]
+      "enum": [
+        "ineligible"
+      ]
     }
   ]
 }
