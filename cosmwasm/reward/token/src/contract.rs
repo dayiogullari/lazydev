@@ -1,10 +1,10 @@
 use cosmwasm_std::{
-    ensure, entry_point, instantiate2_address, to_json_binary, wasm_execute, Binary, Checksum,
-    CodeInfoResponse, Deps, DepsMut, Env, MessageInfo, QueryRequest, Response, StdResult, SubMsg,
-    Uint128, WasmMsg,
+    ensure, entry_point, instantiate2_address, to_json_binary, to_json_string, wasm_execute,
+    Binary, Checksum, CodeInfoResponse, Deps, DepsMut, Env, Event, MessageInfo, QueryRequest,
+    Response, StdResult, SubMsg, Uint128, WasmMsg,
 };
 use lazydev::{
-    contract::STORAGE_ACCESS_INFALLIBLE_MSG,
+    contract::{SERIALIZATION_INFALLIBLE_MSG, STORAGE_ACCESS_INFALLIBLE_MSG},
     models::reward::PrReward,
     msg::{QueryRewardsResponse, RewardMsg},
 };
@@ -132,7 +132,7 @@ pub fn execute(
         ExecuteMsg::Reward(RewardMsg {
             repo,
             pr_id,
-            user_id: _,
+            user_id,
             recipient_address,
             reward_config,
         }) => {
@@ -161,31 +161,43 @@ pub fn execute(
                         .load(deps.storage)
                         .expect(STORAGE_ACCESS_INFALLIBLE_MSG)
                         .contains(&repo),
-                Error::OnlyLazydev
+                Error::InvalidRepo(repo)
             );
 
+            let reward = PrReward::Token {
+                denom: cw20_token_addr.to_string(),
+                amount: reward_amount,
+            };
+
             CLAIMED_REWARDS
-                .save(
-                    deps.storage,
-                    (pr_id, repo),
-                    &PrReward::Token {
-                        denom: cw20_token_addr.to_string(),
-                        amount: reward_amount,
-                    },
-                )
+                .save(deps.storage, (pr_id, repo.clone()), &reward)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-            Ok(Response::new().add_submessage(SubMsg::new(
-                wasm_execute(
-                    cw20_token_addr,
-                    &cw20::Cw20ExecuteMsg::Mint {
-                        recipient: recipient_address.to_string(),
-                        amount: reward_amount,
-                    },
-                    vec![],
-                )
-                .expect("works"),
-            )))
+            Ok(Response::new()
+                .add_submessage(SubMsg::new(
+                    wasm_execute(
+                        cw20_token_addr,
+                        &cw20::Cw20ExecuteMsg::Mint {
+                            recipient: recipient_address.to_string(),
+                            amount: reward_amount,
+                        },
+                        vec![],
+                    )
+                    .expect("works"),
+                ))
+                .add_event(
+                    Event::new("reward")
+                        .add_attribute(
+                            "reward",
+                            to_json_string(&reward).expect(SERIALIZATION_INFALLIBLE_MSG),
+                        )
+                        .add_attributes([
+                            ("org", repo.org),
+                            ("repo", repo.repo),
+                            ("pr", pr_id.to_string()),
+                            ("user", user_id.to_string()),
+                        ]),
+                ))
         }
     }
 }
