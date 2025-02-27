@@ -172,8 +172,9 @@ export const repoHelpers = {
       setOldCommitmentResult(repoCommitment?.value);
 
       // Check for configuration diff
-      const configsAreDifferent =
-        JSON.stringify(repoCommitment?.value) !== JSON.stringify(repoConfig);
+      const configsAreDifferent = repoCommitment
+        ? JSON.stringify(repoCommitment?.value) !== JSON.stringify(repoConfig)
+        : false;
 
       // If configs are different and user didnt accept
       if (configsAreDifferent && !acceptConfigDiff) {
