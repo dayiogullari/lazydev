@@ -109,10 +109,6 @@ pub struct LinkRepoMsg {
     ///
     /// [endpoint]: https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#get-repository-permissions-for-a-user
     pub repo_admin_permissions_proof: Proof,
-    /// The zktls proof of the admin user account. This also contains the user id.
-    ///
-    /// This proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.
-    pub repo_admin_user_proof: Proof,
 }
 
 #[cw_serde]

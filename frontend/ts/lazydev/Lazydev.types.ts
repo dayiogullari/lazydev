@@ -80,7 +80,6 @@ export interface LinkRepoMsg {
   config: RepoConfig;
   repo: Repo;
   repo_admin_permissions_proof: Proof;
-  repo_admin_user_proof: Proof;
   secret: Binary;
 }
 export type QueryMsg =

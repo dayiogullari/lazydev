@@ -24,7 +24,11 @@ pub struct User {
 }
 
 #[cw_serde]
-pub struct CollaboratorPermissionsBody {
-    pub permission: String,
-    pub user: User,
+pub struct UserRepoBody {
+    pub permissions: Permissions,
+}
+
+#[cw_serde]
+pub struct Permissions {
+    pub admin: bool,
 }

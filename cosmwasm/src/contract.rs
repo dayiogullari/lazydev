@@ -8,7 +8,7 @@ use serde::{de::DeserializeOwned, Serialize};
 use crate::{
     error::Error,
     models::{
-        github::{CollaboratorPermissionsBody, PrBody},
+        github::{PrBody, UserRepoBody},
         reclaim::{JsonExtractedParameters, Proof, UserExtractedParameters},
     },
     msg::{
@@ -24,8 +24,6 @@ use crate::{
 
 pub const SERIALIZATION_INFALLIBLE_MSG: &str = "serialization is infallible";
 pub const STORAGE_ACCESS_INFALLIBLE_MSG: &str = "storage access is infallible";
-
-pub const ADMIN_PERMISSION: &str = "admin";
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 #[allow(clippy::needless_pass_by_value)]
@@ -187,31 +185,22 @@ fn link_repo(
     config: &Config,
 ) -> Result<Response, Error> {
     ensure_new_proof(deps, &msg.repo_admin_permissions_proof)?;
-    ensure_new_proof(deps, &msg.repo_admin_user_proof)?;
-
-    let admin_github_user_id = msg
-        .repo_admin_user_proof
-        .deserialize_context::<UserExtractedParameters>()?
-        .extracted_parameters
-        .id
-        .parse::<u64>()
-        .map_err(|_| Error::InvalidUserId)?;
 
     let admin_permissions_body = msg
         .repo_admin_permissions_proof
         .deserialize_context::<JsonExtractedParameters>()?
         .extracted_parameters
-        .deserialize_json::<CollaboratorPermissionsBody>()?;
+        .deserialize_json::<UserRepoBody>()?;
 
     ensure!(
-        admin_permissions_body.permission == ADMIN_PERMISSION,
+        admin_permissions_body.permissions.admin,
         Error::InvalidUserPermission
     );
 
-    ensure!(
-        admin_permissions_body.user.id == admin_github_user_id,
-        Error::UserProofNotForRepoAdmin
-    );
+    // ensure!(
+    //     admin_permissions_body.user.id == admin_github_user_id,
+    //     Error::UserProofNotForRepoAdmin
+    // );
 
     let parameters = msg.repo_admin_permissions_proof.deserialize_parameters()?;
     let (org, repo, _) = parse_github_api_repos_contributors_url(&parameters.url)
@@ -228,9 +217,7 @@ fn link_repo(
             },
         )
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG)
-        .ok_or(Error::UserCommitmentNotFound(
-            admin_permissions_body.user.id,
-        ))?;
+        .ok_or(Error::RepoCommitmentNotFound(msg.repo.clone()))?;
 
     ensure!(
         (config.commitment_delay_min_height..config.commitment_delay_max_height)
@@ -258,12 +245,11 @@ fn link_repo(
         .save(deps.storage, (msg.repo.org, msg.repo.repo), &msg.config)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-    // verify both the user admin proof and the user admin permissions proof
     Ok(Response::new()
-        .add_submessages([
-            verify_proof_sub_msg(&config.verifier_address, msg.repo_admin_user_proof),
-            verify_proof_sub_msg(&config.verifier_address, msg.repo_admin_permissions_proof),
-        ])
+        .add_submessages([verify_proof_sub_msg(
+            &config.verifier_address,
+            msg.repo_admin_permissions_proof,
+        )])
         .add_event(Event::new("link_repo").add_attribute("repo", format!("{org}/{repo}"))))
 }
 

@@ -31,9 +31,9 @@ To prove a pull request has been completed, we use the [get a pull request] endp
 
 ### Repo Admin
 
-> `/repos/${repoOwner}/${repo}/collaborators/${githubUsername}/permission`
+> `/repos/${repoOwner}/${repo}`
 
-To prove a user is an admin in a repository (and therefore is able to set up the repo in LazyDev\_), we use the [get repository permissions for a user] endpoint. This is combined with the [user](#user) proof, which ensures that the submitting user is also the owner of the account with admin permissions.
+To prove a user is an admin in a repository (and therefore is able to set up the repo in LazyDev\_), we use the [get a repository] endpoint, which returns an additional `permission` key if called with the token of an authenticated user. This which ensures that the submitting user has admin permissions for the repository.
 
 ## Commit/Reveal Scheme
 
@@ -60,6 +60,6 @@ A secret is generated client side, and then the sha256 sum of this secret is com
 
 [ens]: https://support.ens.domains/en/articles/7900438-registration-steps
 [get a pull request]: https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#get-a-pull-request
-[get repository permissions for a user]: https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#get-repository-permissions-for-a-user
+[get a repository]: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#get-a-repository
 [get the authenticated user]: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
 [reclaim protocol]: https://reclaimprotocol.org/

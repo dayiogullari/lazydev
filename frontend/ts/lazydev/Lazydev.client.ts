@@ -169,13 +169,11 @@ export interface LazydevInterface extends LazydevReadOnlyInterface {
       config,
       repo,
       repoAdminPermissionsProof,
-      repoAdminUserProof,
       secret,
     }: {
       config: RepoConfig;
       repo: Repo;
       repoAdminPermissionsProof: Proof;
-      repoAdminUserProof: Proof;
       secret: Binary;
     },
     fee_?: number | StdFee | "auto",
@@ -313,13 +311,11 @@ export class LazydevClient extends LazydevQueryClient implements LazydevInterfac
       config,
       repo,
       repoAdminPermissionsProof,
-      repoAdminUserProof,
       secret,
     }: {
       config: RepoConfig;
       repo: Repo;
       repoAdminPermissionsProof: Proof;
-      repoAdminUserProof: Proof;
       secret: Binary;
     },
     fee_: number | StdFee | "auto" = "auto",
@@ -334,7 +330,6 @@ export class LazydevClient extends LazydevQueryClient implements LazydevInterfac
           config,
           repo,
           repo_admin_permissions_proof: repoAdminPermissionsProof,
-          repo_admin_user_proof: repoAdminUserProof,
           secret,
         },
       },
