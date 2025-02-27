@@ -237,6 +237,7 @@
               pkgs.biome
               pkgs.taplo
               pkgs.tree
+              pkgs.mdbook
             ];
             nativeBuildInputs = [
               config.treefmt.build.wrapper

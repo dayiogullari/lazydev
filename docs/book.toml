@@ -1,0 +1,6 @@
+[book]
+authors = ["benluelo", "atahanyild", "keyboord01"]
+language = "en"
+multilingual = false
+src = "src"
+title = "LazyDev_"
