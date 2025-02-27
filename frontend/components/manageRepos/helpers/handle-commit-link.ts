@@ -1,5 +1,8 @@
 import toast from "react-hot-toast";
-import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate";
 import { Decimal } from "@cosmjs/math";
 import { LazydevClient } from "@/ts/lazydev/Lazydev.client";
 import { generateSecret, generateCommitmentKey } from "@/utils/lazydev-helpers";
@@ -7,6 +10,7 @@ import { toBase64 } from "@cosmjs/encoding";
 import { rpc_url, contract_address } from "@/utils/consts";
 import { ConfigItem, RepoDetails, Session } from "./types";
 import { LazydevQueryClient } from "@/ts/lazydev/Lazydev.client";
+import { RepoConfig } from "@/ts/lazydev/Lazydev.types";
 
 export const repoHelpers = {
   _commitRepo: async (
@@ -14,13 +18,9 @@ export const repoHelpers = {
     configurations: ConfigItem[],
     session: Session,
     keplrWalletAddress: string,
-    setIsCommitting: (isCommitting: boolean) => void,
-    setCommitTxHash: (hash: string) => void,
-    setIsCommitted: (isCommitted: boolean) => void,
+    setIsCommitted: (isCommitted: boolean) => void
   ) => {
     if (!selectedRepo || !configurations.length || !session) return;
-
-    setIsCommitting(true);
 
     try {
       const secret = generateSecret();
@@ -38,14 +38,22 @@ export const repoHelpers = {
       const offlineSigner = window.getOfflineSigner?.("pion-1");
       if (!offlineSigner) throw new Error("No signer available");
 
-      const signingClient = await SigningCosmWasmClient.connectWithSigner(rpc_url, offlineSigner, {
-        gasPrice: {
-          denom: "untrn",
-          amount: Decimal.fromUserInput("0.025", 3),
-        },
-      });
+      const signingClient = await SigningCosmWasmClient.connectWithSigner(
+        rpc_url,
+        offlineSigner,
+        {
+          gasPrice: {
+            denom: "untrn",
+            amount: Decimal.fromUserInput("0.025", 3),
+          },
+        }
+      );
 
-      const lazydevClient = new LazydevClient(signingClient, keplrWalletAddress, contract_address);
+      const lazydevClient = new LazydevClient(
+        signingClient,
+        keplrWalletAddress,
+        contract_address
+      );
 
       const result = await lazydevClient.commitRepo({
         commitmentKey,
@@ -55,33 +63,48 @@ export const repoHelpers = {
 
       localStorage.setItem(`repo_${selectedRepo.id}_secret`, toBase64(secret));
       // localStorage.setItem(`repo_${selectedRepo.id}_commitment`, commitmentKey);
-      setCommitTxHash(result.transactionHash);
       setIsCommitted(true);
       toast.success("Repository configuration committed successfully!");
 
       return result;
     } catch (error) {
       console.error("Failed to commit repo:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to commit repository");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to commit repository"
+      );
       throw error;
-    } finally {
-      setIsCommitting(false);
     }
   },
 
-  linkRepo: async (
-    selectedRepo: RepoDetails,
-    configurations: ConfigItem[],
-    session: Session,
-    keplrWalletAddress: string,
-    setIsCommitting: (isCommitting: boolean) => void,
-    setCommitTxHash: (hash: string) => void,
-    setIsCommitted: (isCommitted: boolean) => void,
-    setIsLinked: (isLinked: boolean) => void,
-  ) => {
-    console.log(selectedRepo);
+  linkRepo: async ({
+    selectedRepo,
+    configurations,
+    session,
+    keplrWalletAddress,
+    setIsConfiguring,
+    setCommitTxHash,
+    setIsCommitted,
+    setIsLinked,
+    setIsAlreadyLinked,
+    setRepoConfigDiff,
+    setOldCommitmentResult,
+    acceptConfigDiff = false,
+  }: {
+    selectedRepo: RepoDetails;
+    configurations: ConfigItem[];
+    session: Session;
+    keplrWalletAddress: string;
+    setIsConfiguring: (isConfiguring: boolean) => void;
+    setCommitTxHash: (hash: string) => void;
+    setIsCommitted: (isCommitted: boolean) => void;
+    setIsLinked: (isLinked: boolean) => void;
+    setIsAlreadyLinked: (isAlreadyLinked: boolean) => void;
+    setRepoConfigDiff: (repoConfigDiff: boolean) => void;
+    setOldCommitmentResult: (arg0: RepoConfig | undefined) => void;
+    acceptConfigDiff?: boolean;
+  }) => {
     const [org, repoName] = selectedRepo.fullName.split("/");
-    const RepoQueryCheck = {
+    const repo = {
       org,
       repo: repoName,
     };
@@ -89,44 +112,101 @@ export const repoHelpers = {
     const client = await CosmWasmClient.connect(rpc_url);
     const lazydevQueryClient = new LazydevQueryClient(client, contract_address);
 
-    const CommitmentResult = await lazydevQueryClient.repoCommitment({
-      repo: RepoQueryCheck,
+    const repoCommitment = await lazydevQueryClient.repoCommitment({
+      repo: repo,
     });
-    const ConfigRes = await lazydevQueryClient.repoConfig({
-      repo: RepoQueryCheck,
+    const repoConfig = await lazydevQueryClient.repoConfig({
+      repo: repo,
     });
 
-    //if linked
-    if (ConfigRes) {
-      setIsLinked(true);
+    const chainLatestHeight = await client.getHeight();
+    const lazydevConfig = await lazydevQueryClient.config();
+
+    const currHeightDiff =
+      chainLatestHeight - (repoCommitment?.commitment_height || 0);
+
+    // if linked
+    if (repoConfig) {
+      setIsAlreadyLinked(true);
+      setIsConfiguring(false);
       return;
     }
 
-    //if not commited or linked
-    if (CommitmentResult === null && ConfigRes === null) {
+    // if not commited or linked
+    if (
+      (repoCommitment === null && repoConfig === null) ||
+      currHeightDiff > lazydevConfig.commitment_delay_max_height
+    ) {
       await repoHelpers._commitRepo(
         selectedRepo,
         configurations,
         session,
         keplrWalletAddress,
-        setIsCommitting,
-        setCommitTxHash,
-        setIsCommitted,
+        setIsCommitted
       );
     }
 
     if (!selectedRepo || !session || !keplrWalletAddress) {
       toast.error("Missing required connection data");
+      setIsConfiguring(false);
       return;
     }
 
     try {
-      setIsCommitting(true);
-
-      const savedSecret = localStorage.getItem(`repo_${selectedRepo.id}_secret`);
+      const savedSecret = localStorage.getItem(
+        `repo_${selectedRepo.id}_secret`
+      );
       if (!savedSecret) {
         throw new Error("No saved secret found. Please commit the repo first.");
       }
+
+      // Create repo config from current config
+      const repoConfig = {
+        label_configs: configurations.map((config) => ({
+          label_id: config.labelId,
+          reward_config: config.reward_config,
+          reward_contract: config.reward_contract,
+        })),
+      };
+
+      setOldCommitmentResult(repoCommitment?.value);
+
+      // Check for configuration diff
+      const configsAreDifferent =
+        JSON.stringify(repoCommitment?.value) !== JSON.stringify(repoConfig);
+
+      // If configs are different and user didnt accept
+      if (configsAreDifferent && !acceptConfigDiff) {
+        setRepoConfigDiff(true);
+        setIsConfiguring(false);
+        return null;
+      }
+
+      const offlineSigner = window.getOfflineSigner?.("pion-1");
+      if (!offlineSigner) throw new Error("No signer available");
+
+      const signingClient = await SigningCosmWasmClient.connectWithSigner(
+        rpc_url,
+        offlineSigner,
+        {
+          gasPrice: {
+            denom: "untrn",
+            amount: Decimal.fromUserInput("0.025", 3),
+          },
+        }
+      );
+
+      const lazydevClient = new LazydevClient(
+        signingClient,
+        keplrWalletAddress,
+        contract_address
+      );
+
+      // Use the committed configuration if the user has accepted config differences
+      const configToUse =
+        configsAreDifferent && repoCommitment?.value
+          ? repoCommitment.value
+          : repoConfig;
 
       const adminPermissionsProofResponse = await fetch(
         "https://backend.lazydev.zone/proof-repo-owner",
@@ -139,44 +219,24 @@ export const repoHelpers = {
             githubUsername: session.user.githubUsername,
             accessToken: session.accessToken,
           }),
-        },
+        }
       );
-      const adminPermissionsProofData = await adminPermissionsProofResponse.json();
+      const adminPermissionsProofData =
+        await adminPermissionsProofResponse.json();
       const adminPermissionsProof = adminPermissionsProofData.proofData;
 
-      const offlineSigner = window.getOfflineSigner?.("pion-1");
-      if (!offlineSigner) throw new Error("No signer available");
-
-      const signingClient = await SigningCosmWasmClient.connectWithSigner(rpc_url, offlineSigner, {
-        gasPrice: {
-          denom: "untrn",
-          amount: Decimal.fromUserInput("0.025", 3),
-        },
-      });
-
-      const lazydevClient = new LazydevClient(signingClient, keplrWalletAddress, contract_address);
-
-      const repoConfig = {
-        label_configs: configurations.map((config) => ({
-          label_id: config.labelId,
-          reward_config: config.reward_config,
-          reward_contract: config.reward_contract,
-        })),
-      };
-
-      const repoData = { org, repo: repoName };
-
       const txResult = await lazydevClient.linkRepo({
-        config: repoConfig,
-        repo: repoData,
+        config: configToUse,
+        repo: repo,
         repoAdminPermissionsProof: adminPermissionsProof,
         secret: savedSecret,
       });
-
+      setCommitTxHash(txResult.transactionHash);
       toast.success("Repository linked successfully!");
       setIsLinked(true);
       return txResult;
     } catch (error) {
+      setIsConfiguring(false);
       console.error("Failed to link repo:", error);
       const errorMessage =
         error instanceof Error
@@ -185,7 +245,7 @@ export const repoHelpers = {
       toast.error(errorMessage);
       throw error;
     } finally {
-      setIsCommitting(false);
+      setIsConfiguring(false);
     }
   },
 };

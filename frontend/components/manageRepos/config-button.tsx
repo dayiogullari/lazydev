@@ -9,16 +9,18 @@ interface ConfigItem {
 
 export const ConfigurationButton = ({
   configurations,
-  isCommitting,
+  isConfiguring,
   handleLinkRepo,
   isLinked,
+  isAlreadyLinked,
 }: {
   isLinked: boolean;
   configurations: ConfigItem[];
-  isCommitting: boolean;
+  isConfiguring: boolean;
   handleLinkRepo: () => void;
+  isAlreadyLinked: boolean;
 }) => {
-  if (isCommitting) {
+  if (isConfiguring) {
     return (
       <button
         disabled
@@ -33,11 +35,21 @@ export const ConfigurationButton = ({
   return (
     <button
       onClick={handleLinkRepo}
-      disabled={!configurations.length || isLinked}
-      className="px-6 py-3 rounded-lg flex items-center gap-2 bg-[#09090B] text-[#c1c1c7] hover:bg-zinc-700 border border-zinc-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={!configurations.length || isLinked || isAlreadyLinked}
+      className={`px-6 py-3 rounded-lg flex items-center gap-2 bg-[#09090B] text-[#c1c1c7] ${
+        !configurations.length || isLinked || isAlreadyLinked
+          ? " "
+          : "hover:bg-zinc-700"
+      } border border-zinc-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       <FaRocket className="w-4 h-4" />
-      <span>{isLinked ? "Configuration Linked" : "Confirm Configuration"}</span>
+      <span>
+        {isLinked
+          ? "Configuration Linked"
+          : isAlreadyLinked
+          ? "Configuration Already Linked"
+          : "Confirm Configuration"}
+      </span>
     </button>
   );
 };
