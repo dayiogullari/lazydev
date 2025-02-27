@@ -16,7 +16,4 @@ serde-json-wasm = { workspace = true }
 sha2            = { workspace = true }
 thiserror       = { workspace = true }
 
-# cw721      = { version = "0.18.0", features = ["library"] }
-cw721-base = { version = "0.18.0", features = ["library"] }
-
 lazydev   = { workspace = true, features = ["library"] }

@@ -73,7 +73,7 @@ pub fn instantiate(
         admin: Some(info.sender.to_string()),
         code_id: msg.config.cw721_base_code_id,
         label: msg.config.collection_name.clone(),
-        msg: to_json_binary(&cw721_base::msg::InstantiateMsg {
+        msg: to_json_binary(&crate::msg::cw721::InstantiateMsg {
             name: msg.config.collection_name,
             symbol: msg.config.symbol,
             minter: env.contract.address.to_string(),
@@ -136,7 +136,8 @@ pub fn execute(
             pr_id,
             user_id: _,
             recipient_address,
-            reward_config,
+            // NOTE: Currently unused
+            reward_config: _,
         }) => {
             ensure!(
                 LAZYDEV_ADDR
@@ -193,11 +194,10 @@ pub fn execute(
                     // recipient: recipient_address.to_string(),
                     // amount: reward_amount,
                     // },
-                    &cw721_base::ExecuteMsg::<String, ()>::Mint {
+                    &crate::msg::cw721::ExecuteMsg::Mint {
                         token_id: nft_id.to_string(),
                         owner: recipient_address.to_string(),
                         token_uri: None,
-                        extension: String::new(),
                     },
                     vec![],
                 )

@@ -1,9 +1,6 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Addr;
-use lazydev::{
-    msg::{QueryRewardsResponse, RewardMsg},
-    state::Repo,
-};
+use lazydev::msg::{QueryRewardsResponse, RewardMsg};
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -39,3 +36,38 @@ pub enum QueryMsg {
 
 #[cw_serde]
 pub struct MigrateMsg {}
+
+/// We use cosmwasm-std 2, but cw721 is still using 1.x, causing issues with duplicate symbols at
+/// build time. As such, we redefine the minimal interface we use for interacting with the cw721
+/// contract here.
+pub mod cw721 {
+    use cosmwasm_schema::cw_serde;
+
+    #[cw_serde]
+    pub struct InstantiateMsg {
+        /// Name of the NFT contract
+        pub name: String,
+        /// Symbol of the NFT contract
+        pub symbol: String,
+
+        /// The minter is the only one who can create new NFTs.
+        /// This is designed for a base NFT that is controlled by an external program
+        /// or contract. You will likely replace this with custom logic in custom NFTs
+        pub minter: String,
+    }
+
+    #[cw_serde]
+    pub enum ExecuteMsg {
+        /// Mint a new NFT, can only be called by the contract minter
+        Mint {
+            /// Unique ID of the NFT
+            token_id: String,
+            /// The owner of the newly minter NFT
+            owner: String,
+            /// Universal resource identifier for this NFT
+            /// Should point to a JSON file that conforms to the ERC721
+            /// Metadata JSON Schema
+            token_uri: Option<String>,
+        },
+    }
+}
