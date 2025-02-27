@@ -1,7 +1,6 @@
 use cosmwasm_std::{
-    ensure, entry_point, instantiate2_address, to_json_binary, wasm_execute, Binary, Checksum,
-    CodeInfoResponse, Deps, DepsMut, Env, MessageInfo, QueryRequest, Response, StdResult, SubMsg,
-    WasmMsg,
+    ensure, instantiate2_address, to_json_binary, wasm_execute, Binary, Checksum, CodeInfoResponse,
+    Deps, DepsMut, Env, MessageInfo, QueryRequest, Response, StdResult, SubMsg, WasmMsg,
 };
 use lazydev::{
     contract::STORAGE_ACCESS_INFALLIBLE_MSG,
@@ -19,7 +18,7 @@ use crate::{
     },
 };
 
-#[entry_point]
+#[cosmwasm_std::entry_point]
 #[allow(clippy::needless_pass_by_value)]
 pub fn instantiate(
     deps: DepsMut,
@@ -98,7 +97,7 @@ fn get_code_hash(deps: Deps, code_id: u64) -> StdResult<Checksum> {
         .checksum)
 }
 //TODO: Query all
-#[entry_point]
+#[cosmwasm_std::entry_point]
 #[allow(clippy::needless_pass_by_value)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
@@ -132,7 +131,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-#[entry_point]
+#[cosmwasm_std::entry_point]
 #[allow(clippy::needless_pass_by_value)]
 pub fn execute(
     deps: DepsMut,
@@ -212,7 +211,7 @@ pub fn execute(
     }
 }
 
-#[entry_point]
+#[cosmwasm_std::entry_point]
 pub fn migrate(_: DepsMut, _: Env, _: MigrateMsg) -> StdResult<Response> {
     Ok(Response::default())
 }
