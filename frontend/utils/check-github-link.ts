@@ -1,4 +1,5 @@
 import { LazydevQueryClient } from "@/ts/lazydev/Lazydev.client";
+import { NullableCommitmentForAddr } from "@/ts/lazydev/Lazydev.types";
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 export async function checkIfGithubLinked({
@@ -9,16 +10,25 @@ export async function checkIfGithubLinked({
   githubUserId: number;
   rpcUrl: string;
   contractAddress: string;
-}): Promise<string | null> {
+}): Promise<NullableCommitmentForAddr | string | null> {
   if (!githubUserId) return null;
 
   const client = await CosmWasmClient.connect(rpcUrl);
   const lazydevQueryClient = new LazydevQueryClient(client, contractAddress);
 
-  const result = await lazydevQueryClient.linkedAddress({ githubUserId });
+  const LinkedResult = await lazydevQueryClient.linkedAddress({ githubUserId });
 
-  if (typeof result === "string" && result.length > 0) {
-    return result;
+  if (typeof LinkedResult === "string" && LinkedResult.length > 0) {
+    return LinkedResult;
   }
-  return null;
+
+  const CommitedResult = await lazydevQueryClient.userCommitment({
+    githubUserId,
+  });
+
+  if (CommitedResult === null) {
+    return null;
+  }
+
+  return CommitedResult;
 }
