@@ -136,6 +136,7 @@
 
           lazydev = buildWasmBinary ".";
           lazydev-token-reward = buildWasmBinary "cosmwasm/reward/token";
+          lazydev-nft-reward = buildWasmBinary "cosmwasm/reward/nft";
 
           schema =
             let
@@ -149,6 +150,15 @@
               lazydev-token-reward-schema = craneLib.buildPackage {
                 src = craneLib.cleanCargoSource ./.;
                 cargoExtraArgs = "-p lazydev-token-reward";
+                strictDeps = true;
+                CARGO_PROFILE = "dev";
+                doCheck = false;
+                meta.mainProgram = "schema";
+              };
+
+              lazydev-nft-reward-schema = craneLib.buildPackage {
+                src = craneLib.cleanCargoSource ./.;
+                cargoExtraArgs = "-p lazydev-nft-reward";
                 strictDeps = true;
                 CARGO_PROFILE = "dev";
                 doCheck = false;
@@ -168,6 +178,10 @@
 
                 ${lazydev-token-reward-schema}/bin/schema
                 mv ./schema $out/lazydev-token-reward
+
+                ${lazydev-nft-reward-schema}/bin/schema
+                mv ./schema $out/lazydev-nft-reward
+
               '';
             };
 
@@ -180,6 +194,8 @@
 
               npx @cosmwasm/ts-codegen generate --plugin client --schema ${schema}/lazydev --out ./frontend/ts/lazydev --name lazydev --no-bundle
               npx @cosmwasm/ts-codegen generate --plugin client --schema ${schema}/lazydev-token-reward --out ./frontend/ts/lazydev-token-reward --name lazydev-token-reward --no-bundle
+              npx @cosmwasm/ts-codegen generate --plugin client --schema ${schema}/lazydev-nft-reward --out ./frontend/ts/lazydev-nft-reward --name lazydev-nft-reward --no-bundle
+
             '';
           };
         in
@@ -192,6 +208,7 @@
             inherit
               lazydev
               lazydev-token-reward
+              lazydev-nft-reward              
               schema
               ts-codegen
               ;

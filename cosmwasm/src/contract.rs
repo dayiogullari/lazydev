@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    ensure, entry_point, to_json_binary, to_json_string, wasm_execute, Addr, Binary, Deps, DepsMut,
-    Env, Event, MessageInfo, Response, StdResult, SubMsg, WasmMsg,
+    ensure, to_json_binary, to_json_string, wasm_execute, Addr, Binary, Deps, DepsMut, Env, Event,
+    MessageInfo, Response, StdResult, SubMsg, WasmMsg,
 };
 use cw_storage_plus::{Map, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
@@ -25,7 +25,7 @@ use crate::{
 pub const SERIALIZATION_INFALLIBLE_MSG: &str = "serialization is infallible";
 pub const STORAGE_ACCESS_INFALLIBLE_MSG: &str = "storage access is infallible";
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[cfg_attr(not(feature = "library"), cosmwasm_std::entry_point)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn instantiate(
     deps: DepsMut,
@@ -47,7 +47,7 @@ pub fn instantiate(
     Ok(Response::default())
 }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[cfg_attr(not(feature = "library"), cosmwasm_std::entry_point)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
@@ -96,13 +96,13 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[cfg_attr(not(feature = "library"), cosmwasm_std::entry_point)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn migrate(_: DepsMut, _: Env, _: MigrateMsg) -> StdResult<Response> {
     Ok(Response::default())
 }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[cfg_attr(not(feature = "library"), cosmwasm_std::entry_point)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn execute(
     mut deps: DepsMut,

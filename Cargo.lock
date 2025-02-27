@@ -685,6 +685,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazydev-nft-reward"
+version = "0.0.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-storage-plus",
+ "hex",
+ "lazydev",
+ "serde",
+ "serde-json-wasm 0.2.3",
+ "sha2",
+ "thiserror",
+]
+
+[[package]]
 name = "lazydev-token-reward"
 version = "0.0.0"
 dependencies = [

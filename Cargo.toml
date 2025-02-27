@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "cosmwasm/reward/token"]
+members = [".", "cosmwasm/reward/token", "cosmwasm/reward/nft"]
 
 [workspace.dependencies]
 cosmwasm-schema = "2.2.1"
