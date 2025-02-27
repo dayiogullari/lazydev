@@ -15,7 +15,7 @@ export const repoHelpers = {
     keplrWalletAddress: string,
     setIsCommitting: (isCommitting: boolean) => void,
     setCommitTxHash: (hash: string) => void,
-    setIsCommitted: (isCommitted: boolean) => void,
+    setIsCommitted: (isCommitted: boolean) => void
   ) => {
     if (!selectedRepo || !configurations.length || !session) return;
 
@@ -45,13 +45,13 @@ export const repoHelpers = {
             denom: "untrn",
             amount: Decimal.fromUserInput("0.025", 3),
           },
-        },
+        }
       );
 
       const lazydevClient = new LazydevClient(
         signingClient,
         keplrWalletAddress,
-        contract_address,
+        contract_address
       );
 
       const result = await lazydevClient.commitRepo({
@@ -70,7 +70,7 @@ export const repoHelpers = {
     } catch (error) {
       console.error("Failed to commit repo:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to commit repository",
+        error instanceof Error ? error.message : "Failed to commit repository"
       );
       throw error;
     } finally {
@@ -86,7 +86,7 @@ export const repoHelpers = {
     setIsCommitting: (isCommitting: boolean) => void,
     setCommitTxHash: (hash: string) => void,
     setIsCommitted: (isCommitted: boolean) => void,
-    setIsLinked: (isLinked: boolean) => void,
+    setIsLinked: (isLinked: boolean) => void
   ) => {
     await repoHelpers._commitRepo(
       selectedRepo,
@@ -95,7 +95,7 @@ export const repoHelpers = {
       keplrWalletAddress,
       setIsCommitting,
       setCommitTxHash,
-      setIsCommitted,
+      setIsCommitted
     );
 
     if (!selectedRepo || !session || !keplrWalletAddress) {
@@ -109,7 +109,7 @@ export const repoHelpers = {
       setIsCommitting(true);
 
       const savedSecret = localStorage.getItem(
-        `repo_${selectedRepo.id}_secret`,
+        `repo_${selectedRepo.id}_secret`
       );
       if (!savedSecret) {
         throw new Error("No saved secret found. Please commit the repo first.");
@@ -126,22 +126,11 @@ export const repoHelpers = {
             githubUsername: session.user.githubUsername,
             accessToken: session.accessToken,
           }),
-        },
+        }
       );
       const adminPermissionsProofData =
         await adminPermissionsProofResponse.json();
       const adminPermissionsProof = adminPermissionsProofData.proofData;
-
-      const adminUserProofResponse = await fetch(
-        "https://backend.lazydev.zone/proof-user",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ accessToken: session.accessToken }),
-        },
-      );
-      const adminUserProofData = await adminUserProofResponse.json();
-      const adminUserProof = adminUserProofData.proofData;
 
       const offlineSigner = window.getOfflineSigner?.("pion-1");
       if (!offlineSigner) throw new Error("No signer available");
@@ -154,13 +143,13 @@ export const repoHelpers = {
             denom: "untrn",
             amount: Decimal.fromUserInput("0.025", 3),
           },
-        },
+        }
       );
 
       const lazydevClient = new LazydevClient(
         signingClient,
         keplrWalletAddress,
-        contract_address,
+        contract_address
       );
 
       const repoConfig = {
