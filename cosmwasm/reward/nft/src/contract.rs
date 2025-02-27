@@ -35,13 +35,13 @@ pub fn instantiate(
         .save(deps.storage, &msg.lazydev_address)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-    ALLOWED_REPOS
-        .save(deps.storage, &msg.config.valid_repos)
-        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
+    // ALLOWED_REPOS
+    // .save(deps.storage, &msg.config.valid_repos)
+    // .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-    ALLOWED_ORGS
-        .save(deps.storage, &msg.config.valid_orgs)
-        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
+    // ALLOWED_ORGS
+    // .save(deps.storage, &msg.config.valid_orgs)
+    // .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
     LAST_NFT_ID
         .save(deps.storage, &0)
@@ -53,7 +53,7 @@ pub fn instantiate(
     let salt = Sha256::new()
         .chain_update(env.contract.address.as_bytes())
         .chain_update([0])
-        .chain_update(msg.config.name.as_bytes())
+        .chain_update(msg.config.collection_name.as_bytes())
         .chain_update([0])
         .chain_update(msg.config.symbol.as_bytes())
         .finalize();
@@ -72,9 +72,9 @@ pub fn instantiate(
     Ok(Response::default().add_message(WasmMsg::Instantiate2 {
         admin: Some(info.sender.to_string()),
         code_id: msg.config.cw721_base_code_id,
-        label: msg.config.name.clone(),
+        label: msg.config.collection_name.clone(),
         msg: to_json_binary(&cw721_base::msg::InstantiateMsg {
-            name: msg.config.name,
+            name: msg.config.collection_name,
             symbol: msg.config.symbol,
             minter: env.contract.address.to_string(),
         })?,
@@ -111,7 +111,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
                 None => QueryRewardsResponse {
                     claimed: false,
                     rewards: vec![PrReward::Token {
-                        denom: TOKEN_ADDR.load(deps.storage)?.to_string(),
+                        denom: SYMBOL.load(deps.storage)?.to_string(),
                         amount: reward_config.parse()?,
                     }],
                 },
@@ -146,7 +146,7 @@ pub fn execute(
                 Error::OnlyLazydev
             );
 
-            let cw721_token_address = TOKEN_ADDR
+            let cw721_token_address = CW721_ADDR
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
             // let reward_amount = reward_config
@@ -168,7 +168,9 @@ pub fn execute(
             let nft_id = LAST_NFT_ID
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-            LAST_NFT_ID.save(deps.storage, &(nft_id + 1));
+            LAST_NFT_ID
+                .save(deps.storage, &(nft_id + 1))
+                .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
             let symbol = SYMBOL
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
@@ -177,7 +179,10 @@ pub fn execute(
                 .save(
                     deps.storage,
                     (pr_id, repo),
-                    &PrReward::Nft { symbol, id: nft_id },
+                    &PrReward::Nft {
+                        symbol,
+                        id: Uint128::new(nft_id.into()),
+                    },
                 )
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
@@ -188,11 +193,11 @@ pub fn execute(
                     // recipient: recipient_address.to_string(),
                     // amount: reward_amount,
                     // },
-                    &cw721_base::ExecuteMsg::<Option<String>>::Mint {
-                        token_id: nft_id,
-                        owner: recipient_address,
+                    &cw721_base::ExecuteMsg::<String, ()>::Mint {
+                        token_id: nft_id.to_string(),
+                        owner: recipient_address.to_string(),
                         token_uri: None,
-                        extension: None,
+                        extension: String::new(),
                     },
                     vec![],
                 )

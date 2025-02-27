@@ -11,5 +11,8 @@ pub enum PrReward {
         amount: Uint128,
     },
     // TODO: Add NFT reward type
-    // Nft {}
+    Nft {
+        symbol: String,
+        id: Uint128,
+    },
 }
