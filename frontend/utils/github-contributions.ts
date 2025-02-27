@@ -14,9 +14,7 @@ interface Contribution {
 export async function getGithubContributions(username: string) {
   try {
     const repos = await FilteredRepos(rpc_url, contract_address);
-    const repoQueryString = repos
-      .map(({ org, repo }) => `repo:${org}/${repo}`)
-      .join("+");
+    const repoQueryString = repos.map(({ org, repo }) => `repo:${org}/${repo}`).join("+");
 
     const response = await fetch(
       `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`,

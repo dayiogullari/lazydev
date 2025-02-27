@@ -31,16 +31,12 @@ const getSigningClient = async (walletAddress: string) => {
   const offlineSigner = window.getOfflineSigner?.("pion-1");
   if (!offlineSigner) throw new Error("No signer available");
 
-  const signingClient = await SigningCosmWasmClient.connectWithSigner(
-    rpc_url,
-    offlineSigner,
-    {
-      gasPrice: {
-        denom: "untrn",
-        amount: Decimal.fromUserInput("0.025", 3),
-      },
+  const signingClient = await SigningCosmWasmClient.connectWithSigner(rpc_url, offlineSigner, {
+    gasPrice: {
+      denom: "untrn",
+      amount: Decimal.fromUserInput("0.025", 3),
     },
-  );
+  });
 
   return new LazydevClient(signingClient, walletAddress, contract_address);
 };
@@ -80,19 +76,16 @@ export const linkRepository = async ({
   secret,
 }: LinkRepoParams) => {
   try {
-    const adminPermissionsProof = await fetch(
-      "https://backend.lazydev.zone/proof-repo-owner",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          repoOwner: repoData.org,
-          repo: repoData.repo,
-          githubUsername: session.user.githubUsername,
-          accessToken: session.accessToken,
-        }),
-      },
-    )
+    const adminPermissionsProof = await fetch("https://backend.lazydev.zone/proof-repo-owner", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        repoOwner: repoData.org,
+        repo: repoData.repo,
+        githubUsername: session.user.githubUsername,
+        accessToken: session.accessToken,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => data.proofData);
     const client = await getSigningClient(keplrWalletAddress);
