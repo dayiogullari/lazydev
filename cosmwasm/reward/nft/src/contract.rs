@@ -35,16 +35,16 @@ pub fn instantiate(
         .save(deps.storage, &msg.lazydev_address)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-    // ALLOWED_REPOS
-    // .save(deps.storage, &msg.config.valid_repos)
-    // .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
+    ALLOWED_REPOS
+        .save(deps.storage, &msg.config.valid_repos)
+        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-    // ALLOWED_ORGS
-    // .save(deps.storage, &msg.config.valid_orgs)
-    // .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
+    ALLOWED_ORGS
+        .save(deps.storage, &msg.config.valid_orgs)
+        .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
     LAST_NFT_ID
-        .save(deps.storage, &0)
+        .save(deps.storage, &1)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
     SYMBOL
         .save(deps.storage, &msg.config.symbol)
@@ -150,9 +150,6 @@ pub fn execute(
             let cw721_token_address = CW721_ADDR
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-            // let reward_amount = reward_config
-            // .parse::<Uint128>()
-            // .map_err(Error::InvalidConfig)?;
 
             ensure!(
                 ALLOWED_ORGS
