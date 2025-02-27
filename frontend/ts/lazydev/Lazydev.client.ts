@@ -37,6 +37,7 @@ import {
 } from "./Lazydev.types";
 export interface LazydevReadOnlyInterface {
   contractAddress: string;
+  config: () => Promise<Config>;
   linkedAddress: ({
     githubUserId,
   }: {
@@ -74,6 +75,7 @@ export class LazydevQueryClient implements LazydevReadOnlyInterface {
   constructor(client: CosmWasmClient, contractAddress: string) {
     this.client = client;
     this.contractAddress = contractAddress;
+    this.config = this.config.bind(this);
     this.linkedAddress = this.linkedAddress.bind(this);
     this.userCommitment = this.userCommitment.bind(this);
     this.repoCommitment = this.repoCommitment.bind(this);
@@ -81,6 +83,11 @@ export class LazydevQueryClient implements LazydevReadOnlyInterface {
     this.repoConfig = this.repoConfig.bind(this);
     this.queryPrEligibility = this.queryPrEligibility.bind(this);
   }
+  config = async (): Promise<Config> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      config: {},
+    });
+  };
   linkedAddress = async ({
     githubUserId,
   }: {

@@ -115,7 +115,7 @@ pub struct LinkRepoMsg {
 #[derive(QueryResponses)]
 pub enum QueryMsg {
     #[returns(Config)]
-    Config,
+    Config {},
     /// Returns the linked account of a github user, or [`None`] if the user has not yet been
     /// linked.
     #[returns(Option<Addr>)]

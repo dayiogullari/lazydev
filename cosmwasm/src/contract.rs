@@ -51,7 +51,7 @@ pub fn instantiate(
 #[allow(clippy::needless_pass_by_value)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::Config => Ok(to_json_binary(&CONFIG.load(deps.storage)?)?),
+        QueryMsg::Config {} => Ok(to_json_binary(&CONFIG.load(deps.storage)?)?),
         QueryMsg::LinkedAddress { github_user_id } => Ok(to_json_binary(
             &USERS.may_load(deps.storage, github_user_id)?,
         )?),

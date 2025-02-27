@@ -83,7 +83,9 @@ export interface LinkRepoMsg {
   secret: Binary;
 }
 export type QueryMsg =
-  | "config"
+  | {
+      config: {};
+    }
   | {
       linked_address: {
         github_user_id: number;
