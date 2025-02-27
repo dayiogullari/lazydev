@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  PropsWithChildren,
-} from "react";
+import React, { createContext, useState, useEffect, PropsWithChildren } from "react";
 import { Keplr } from "@keplr-wallet/provider-extension";
 import { TxRaw } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { KeplrSignOptions, SignDoc } from "@keplr-wallet/types";
@@ -18,7 +13,7 @@ interface KeplrWalletContextInterface {
   sendTransaction: (
     chainId: string,
     signDoc: SignDoc,
-    signOptions?: KeplrSignOptions | undefined
+    signOptions?: KeplrSignOptions | undefined,
   ) => Promise<string | null>;
 }
 
@@ -39,12 +34,9 @@ const getKeplrFromProvider = async (): Promise<Keplr | undefined> => {
   }
 };
 
-export const KeplrWalletProvider = ({
-  children,
-}: PropsWithChildren<object>) => {
+export const KeplrWalletProvider = ({ children }: PropsWithChildren<object>) => {
   const [keplrWalletAddress, setKeplrWalletAddress] = useState<string>("");
-  const [isKeplrWalletInstalled, setIsKeplrWalletInstalled] =
-    useState<boolean>(false);
+  const [isKeplrWalletInstalled, setIsKeplrWalletInstalled] = useState<boolean>(false);
 
   useEffect(() => {
     const checkKeplrInstalled = async () => {
@@ -55,9 +47,7 @@ export const KeplrWalletProvider = ({
     checkKeplrInstalled();
   }, []);
 
-  const connectKeplrWallet = async (
-    chainId: string = "pion-1"
-  ): Promise<string> => {
+  const connectKeplrWallet = async (chainId: string = "pion-1"): Promise<string> => {
     try {
       const keplr = await getKeplrFromProvider();
 
@@ -97,7 +87,7 @@ export const KeplrWalletProvider = ({
   const sendTransaction = async (
     chainId: string,
     signDoc: SignDoc,
-    signOptions?: KeplrSignOptions | undefined
+    signOptions?: KeplrSignOptions | undefined,
   ): Promise<string | null> => {
     try {
       const keplr = await getKeplrFromProvider();
@@ -114,22 +104,16 @@ export const KeplrWalletProvider = ({
         chainId,
         keplrWalletAddress,
         signDoc,
-        signOptions
+        signOptions,
       );
 
       const protobufTx = TxRaw.encode({
         bodyBytes: protoSignResponse.signed.bodyBytes,
         authInfoBytes: protoSignResponse.signed.authInfoBytes,
-        signatures: [
-          Buffer.from(protoSignResponse.signature.signature, "base64"),
-        ],
+        signatures: [Buffer.from(protoSignResponse.signature.signature, "base64")],
       }).finish();
 
-      const txResponse = await keplr.sendTx(
-        chainId,
-        protobufTx,
-        BroadcastMode.Block
-      );
+      const txResponse = await keplr.sendTx(chainId, protobufTx, BroadcastMode.Block);
       const txHash = Array.from(txResponse)
         .map((byte) => byte.toString(16).padStart(2, "0"))
         .join("");

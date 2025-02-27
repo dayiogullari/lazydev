@@ -89,22 +89,14 @@ export async function handleCommitStep({
     const offlineSigner = window.getOfflineSigner?.("pion-1");
     if (!offlineSigner) throw new Error("No signer available");
 
-    const signingClient = await SigningCosmWasmClient.connectWithSigner(
-      rpcUrl,
-      offlineSigner,
-      {
-        gasPrice: {
-          denom: "untrn",
-          amount: Decimal.fromUserInput("0.025", 3),
-        },
-      }
-    );
+    const signingClient = await SigningCosmWasmClient.connectWithSigner(rpcUrl, offlineSigner, {
+      gasPrice: {
+        denom: "untrn",
+        amount: Decimal.fromUserInput("0.025", 3),
+      },
+    });
 
-    const lazydevClient = new LazydevClient(
-      signingClient,
-      keplrWalletAddress,
-      contractAddress
-    );
+    const lazydevClient = new LazydevClient(signingClient, keplrWalletAddress, contractAddress);
 
     const txResult = await lazydevClient.commitAccount({
       commitmentKey,
@@ -116,11 +108,7 @@ export async function handleCommitStep({
     toast.success("GitHub ID committed successfully!");
   } catch (error) {
     setCurrentStep("commit");
-    toast.error(
-      `Commit failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
+    toast.error(`Commit failed: ${error instanceof Error ? error.message : "Unknown error"}`);
     setIsLoading(false);
   }
 }
@@ -159,14 +147,11 @@ export async function handleLinkStep({
   try {
     setIsLoading(true);
 
-    const proofResponse = await fetch(
-      "https://backend.lazydev.zone/proof-user",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: githubToken }),
-      }
-    );
+    const proofResponse = await fetch("https://backend.lazydev.zone/proof-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken: githubToken }),
+    });
     if (!proofResponse.ok) throw new Error("Failed to get proof data");
 
     const { proofData } = await proofResponse.json();
@@ -174,22 +159,14 @@ export async function handleLinkStep({
     const offlineSigner = window.getOfflineSigner?.("pion-1");
     if (!offlineSigner) throw new Error("No signer available");
 
-    const signingClient = await SigningCosmWasmClient.connectWithSigner(
-      rpcUrl,
-      offlineSigner,
-      {
-        gasPrice: {
-          denom: "untrn",
-          amount: Decimal.fromUserInput("0.025", 3),
-        },
-      }
-    );
+    const signingClient = await SigningCosmWasmClient.connectWithSigner(rpcUrl, offlineSigner, {
+      gasPrice: {
+        denom: "untrn",
+        amount: Decimal.fromUserInput("0.025", 3),
+      },
+    });
 
-    const lazydevClient = new LazydevClient(
-      signingClient,
-      keplrWalletAddress,
-      contractAddress
-    );
+    const lazydevClient = new LazydevClient(signingClient, keplrWalletAddress, contractAddress);
 
     const txResult = await lazydevClient.linkAccount({
       recipientAddress: keplrWalletAddress,
@@ -203,11 +180,7 @@ export async function handleLinkStep({
     setLinkedWalletAddress(keplrWalletAddress);
     setCurrentStep("complete");
   } catch (error) {
-    toast.error(
-      `Linking failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
+    toast.error(`Linking failed: ${error instanceof Error ? error.message : "Unknown error"}`);
   } finally {
     setIsLoading(false);
   }
