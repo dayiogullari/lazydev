@@ -4,6 +4,7 @@ import { Decimal } from "@cosmjs/math";
 import { LazydevClient } from "@/ts/lazydev/Lazydev.client";
 import { generateSecret, generateCommitmentKey } from "@/utils/lazydev-helpers";
 import { fromBase64, toBase64 } from "@cosmjs/encoding";
+import { rpc_url, contract_address } from "@/utils/consts";
 import { ConfigItem, RepoDetails, Session } from "./types";
 
 export const repoHelpers = {
@@ -37,7 +38,7 @@ export const repoHelpers = {
       if (!offlineSigner) throw new Error("No signer available");
 
       const signingClient = await SigningCosmWasmClient.connectWithSigner(
-        "https://rpc.pion.rs-testnet.polypore.xyz",
+        rpc_url,
         offlineSigner,
         {
           gasPrice: {
@@ -50,7 +51,7 @@ export const repoHelpers = {
       const lazydevClient = new LazydevClient(
         signingClient,
         keplrWalletAddress,
-        "neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86",
+        contract_address,
       );
 
       const result = await lazydevClient.commitRepo({
@@ -68,7 +69,9 @@ export const repoHelpers = {
       return result;
     } catch (error) {
       console.error("Failed to commit repo:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to commit repository");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to commit repository",
+      );
       throw error;
     } finally {
       setIsCommitting(false);
@@ -105,7 +108,9 @@ export const repoHelpers = {
     try {
       setIsCommitting(true);
 
-      const savedSecret = localStorage.getItem(`repo_${selectedRepo.id}_secret`);
+      const savedSecret = localStorage.getItem(
+        `repo_${selectedRepo.id}_secret`,
+      );
       if (!savedSecret) {
         throw new Error("No saved secret found. Please commit the repo first.");
       }
@@ -123,14 +128,18 @@ export const repoHelpers = {
           }),
         },
       );
-      const adminPermissionsProofData = await adminPermissionsProofResponse.json();
+      const adminPermissionsProofData =
+        await adminPermissionsProofResponse.json();
       const adminPermissionsProof = adminPermissionsProofData.proofData;
 
-      const adminUserProofResponse = await fetch("https://backend.lazydev.zone/proof-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: session.accessToken }),
-      });
+      const adminUserProofResponse = await fetch(
+        "https://backend.lazydev.zone/proof-user",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken: session.accessToken }),
+        },
+      );
       const adminUserProofData = await adminUserProofResponse.json();
       const adminUserProof = adminUserProofData.proofData;
 
@@ -138,7 +147,7 @@ export const repoHelpers = {
       if (!offlineSigner) throw new Error("No signer available");
 
       const signingClient = await SigningCosmWasmClient.connectWithSigner(
-        "https://rpc.pion.rs-testnet.polypore.xyz",
+        rpc_url,
         offlineSigner,
         {
           gasPrice: {
@@ -151,7 +160,7 @@ export const repoHelpers = {
       const lazydevClient = new LazydevClient(
         signingClient,
         keplrWalletAddress,
-        "neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86",
+        contract_address,
       );
 
       const repoConfig = {
@@ -168,7 +177,6 @@ export const repoHelpers = {
         config: repoConfig,
         repo: repoData,
         repoAdminPermissionsProof: adminPermissionsProof,
-        repoAdminUserProof: adminUserProof,
         secret: toBase64(fromBase64(savedSecret)),
       });
 

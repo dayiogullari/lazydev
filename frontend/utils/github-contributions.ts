@@ -1,4 +1,5 @@
 import { FilteredRepos } from "./filtered-repos";
+import { contract_address, rpc_url } from "./consts";
 
 interface Contribution {
   repo: string;
@@ -12,11 +13,10 @@ interface Contribution {
 
 export async function getGithubContributions(username: string) {
   try {
-    const repos = await FilteredRepos(
-      "https://rpc.pion.rs-testnet.polypore.xyz",
-      "neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86",
-    );
-    const repoQueryString = repos.map(({ org, repo }) => `repo:${org}/${repo}`).join("+");
+    const repos = await FilteredRepos(rpc_url, contract_address);
+    const repoQueryString = repos
+      .map(({ org, repo }) => `repo:${org}/${repo}`)
+      .join("+");
 
     const response = await fetch(
       `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`,

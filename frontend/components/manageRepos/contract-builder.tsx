@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { useKeplrWallet } from "@/providers/kepler-context";
 import { Copy, ExternalLink, Loader2, Rocket } from "lucide-react";
+import { rpc_url, contract_address } from "@/utils/consts";
 import Link from "next/link";
 
 interface ContractData {
@@ -24,7 +25,9 @@ const ContractBuilder = () => {
     amountPerReward: "",
   });
   const [deploying, setDeploying] = useState(false);
-  const [deployedContracts, setDeployedContracts] = useState<ContractData[]>([]);
+  const [deployedContracts, setDeployedContracts] = useState<ContractData[]>(
+    [],
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const ContractBuilder = () => {
       if (!offlineSigner) throw new Error("No signer available");
 
       const signingClient = await SigningCosmWasmClient.connectWithSigner(
-        "https://rpc.pion.rs-testnet.polypore.xyz",
+        rpc_url,
         offlineSigner,
         {
           gasPrice: {
@@ -66,7 +69,7 @@ const ContractBuilder = () => {
           decimals: parseInt(formData.decimals),
           cw20_base_code_id: 10880,
         },
-        lazydev_address: "neutron17763lnw3wp74zg8etdpultvj2sysx2qrsv0hwrjay3dwyyd9uqyqhcxr86",
+        lazydev_address: contract_address,
       };
 
       const result = await signingClient.instantiate(
@@ -87,7 +90,10 @@ const ContractBuilder = () => {
 
       const updatedContracts = [...deployedContracts, newContract];
       setDeployedContracts(updatedContracts);
-      localStorage.setItem("deployedContracts", JSON.stringify(updatedContracts));
+      localStorage.setItem(
+        "deployedContracts",
+        JSON.stringify(updatedContracts),
+      );
 
       setFormData({
         name: "",
@@ -97,7 +103,9 @@ const ContractBuilder = () => {
       });
     } catch (error) {
       console.error("Contract deployment failed:", error);
-      setError(error instanceof Error ? error.message : "Contract deployment failed");
+      setError(
+        error instanceof Error ? error.message : "Contract deployment failed",
+      );
     } finally {
       setDeploying(false);
     }
@@ -117,36 +125,50 @@ const ContractBuilder = () => {
         )}
         <div className="space-y-6">
           <div className="border-b border-zinc-800 pb-4">
-            <h2 className="text-2xl font-semibold text-green-400">Create New Token Contract</h2>
-            <p className="mt-1 text-sm text-zinc-400">Configure your token parameters below</p>
+            <h2 className="text-2xl font-semibold text-green-400">
+              Create New Token Contract
+            </h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Configure your token parameters below
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300">Token Name</label>
+                <label className="text-sm font-medium text-zinc-300">
+                  Token Name
+                </label>
                 <input
                   className="w-full px-4 py-3 rounded-lg bg-[#09090B] text-zinc-200 border border-zinc-800 focus:border-green-400/50  focus:outline-none focus:ring-0 transition-all "
                   value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   placeholder="My Token"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300">Token Symbol</label>
+                <label className="text-sm font-medium text-zinc-300">
+                  Token Symbol
+                </label>
                 <input
                   className="w-full px-4 py-3 rounded-lg bg-[#09090B] text-zinc-200 border border-zinc-800 focus:border-green-400/50  focus:outline-none focus:ring-0 transition-all"
                   value={formData.symbol}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, symbol: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, symbol: e.target.value }))
+                  }
                   placeholder="MTK"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300">Decimals</label>
+                <label className="text-sm font-medium text-zinc-300">
+                  Decimals
+                </label>
                 <input
                   type="number"
                   className="w-full px-4 py-3 rounded-lg bg-[#09090B] text-zinc-200 border border-zinc-800 focus:border-green-400/50  focus:outline-none focus:ring-0 transition-all"
@@ -191,7 +213,9 @@ const ContractBuilder = () => {
                 Configured Contracts
               </span>
             </h2>
-            <p className="mt-1 text-sm text-zinc-400">Previously deployed token contracts</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Previously deployed token contracts
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -206,7 +230,9 @@ const ContractBuilder = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-zinc-200">
                       {contract.name}
-                      <span className="ml-2 text-green-400">({contract.symbol})</span>
+                      <span className="ml-2 text-green-400">
+                        ({contract.symbol})
+                      </span>
                     </h3>
                     <Link
                       href={`https://neutron.celat.one/pion-1/contracts/${contract.address}`}
@@ -219,9 +245,13 @@ const ContractBuilder = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-zinc-400">Address:</span>
-                      <span className="text-zinc-300 font-mono truncate">{contract.address}</span>
+                      <span className="text-zinc-300 font-mono truncate">
+                        {contract.address}
+                      </span>
                       <button
-                        onClick={() => navigator.clipboard.writeText(contract.address)}
+                        onClick={() =>
+                          navigator.clipboard.writeText(contract.address)
+                        }
                         className="text-zinc-500 hover:text-green-400 transition-colors"
                       >
                         <Copy className="w-4 h-4" />
