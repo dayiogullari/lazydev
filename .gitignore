@@ -56,3 +56,6 @@ frontend/*.tsbuildinfo
 frontend/next-env.d.ts
 
 schema/
+
+docs/book
+docs/index.html
