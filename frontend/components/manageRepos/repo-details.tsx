@@ -94,6 +94,8 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
     }
   };
 
+  const [org, repo] = selectedRepo.fullName.split("/");
+
   return (
     <div className="space-y-6">
       <button
@@ -193,9 +195,11 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
 
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-slate-100">
-              {selectedRepo.name}
-            </h1>
+            <div className="flex items-center space-x-2 text-2xl font-bold text-slate-100">
+              {org}
+              <span className="text-gray-500 px-1">/</span>
+              {repo}
+            </div>
             <Link
               href={selectedRepo.url}
               target="_blank"
