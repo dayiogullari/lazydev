@@ -27,8 +27,12 @@ import {
   MigrateMsg,
   NullableAddr,
   PrEligibility,
+  NullableCommitmentForRepoConfig,
+  CommitmentForRepoConfig,
   NullableRepoConfig,
   ArrayOfRepo,
+  NullableCommitmentForAddr,
+  CommitmentForAddr,
 } from "./Lazydev.types";
 export interface LazydevReadOnlyInterface {
   contractAddress: string;
@@ -37,6 +41,16 @@ export interface LazydevReadOnlyInterface {
   }: {
     githubUserId: number;
   }) => Promise<NullableAddr>;
+  userCommitment: ({
+    githubUserId,
+  }: {
+    githubUserId: number;
+  }) => Promise<NullableCommitmentForAddr>;
+  repoCommitment: ({
+    repo,
+  }: {
+    repo: Repo;
+  }) => Promise<NullableCommitmentForRepoConfig>;
   repos: () => Promise<ArrayOfRepo>;
   repoConfig: ({
     repo,
@@ -60,6 +74,8 @@ export class LazydevQueryClient implements LazydevReadOnlyInterface {
     this.client = client;
     this.contractAddress = contractAddress;
     this.linkedAddress = this.linkedAddress.bind(this);
+    this.userCommitment = this.userCommitment.bind(this);
+    this.repoCommitment = this.repoCommitment.bind(this);
     this.repos = this.repos.bind(this);
     this.repoConfig = this.repoConfig.bind(this);
     this.queryPrEligibility = this.queryPrEligibility.bind(this);
@@ -72,6 +88,28 @@ export class LazydevQueryClient implements LazydevReadOnlyInterface {
     return this.client.queryContractSmart(this.contractAddress, {
       linked_address: {
         github_user_id: githubUserId,
+      },
+    });
+  };
+  userCommitment = async ({
+    githubUserId,
+  }: {
+    githubUserId: number;
+  }): Promise<NullableCommitmentForAddr> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      user_commitment: {
+        github_user_id: githubUserId,
+      },
+    });
+  };
+  repoCommitment = async ({
+    repo,
+  }: {
+    repo: Repo;
+  }): Promise<NullableCommitmentForRepoConfig> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      repo_commitment: {
+        repo,
       },
     });
   };

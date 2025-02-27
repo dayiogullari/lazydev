@@ -3,7 +3,7 @@ use cosmwasm_std::{Addr, Binary};
 
 use crate::{
     models::{reclaim::Proof, reward::PrReward},
-    state::{Repo, RepoConfig},
+    state::{Commitment, Repo, RepoConfig},
 };
 
 #[cw_serde]
@@ -118,6 +118,10 @@ pub enum QueryMsg {
     /// linked.
     #[returns(Option<Addr>)]
     LinkedAddress { github_user_id: u64 },
+    #[returns(Option<Commitment<Addr>>)]
+    UserCommitment { github_user_id: u64 },
+    #[returns(Option<Commitment<RepoConfig>>)]
+    RepoCommitment { repo: Repo },
     /// Returns all of the configured repos.
     #[returns(Vec<Repo>)]
     Repos {},

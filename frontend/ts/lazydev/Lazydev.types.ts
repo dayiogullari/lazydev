@@ -89,6 +89,16 @@ export type QueryMsg =
       };
     }
   | {
+      user_commitment: {
+        github_user_id: number;
+      };
+    }
+  | {
+      repo_commitment: {
+        repo: Repo;
+      };
+    }
+  | {
       repos: {};
     }
   | {
@@ -106,5 +116,17 @@ export type QueryMsg =
 export interface MigrateMsg {}
 export type NullableAddr = Addr | null;
 export type PrEligibility = "claimed" | "eligible" | "ineligible";
+export type NullableCommitmentForRepoConfig = CommitmentForRepoConfig | null;
+export interface CommitmentForRepoConfig {
+  commitment_height: number;
+  commitment_key: Binary;
+  value: RepoConfig;
+}
 export type NullableRepoConfig = RepoConfig | null;
 export type ArrayOfRepo = Repo[];
+export type NullableCommitmentForAddr = CommitmentForAddr | null;
+export interface CommitmentForAddr {
+  commitment_height: number;
+  commitment_key: Binary;
+  value: Addr;
+}

@@ -54,6 +54,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::LinkedAddress { github_user_id } => Ok(to_json_binary(
             &USERS.may_load(deps.storage, github_user_id)?,
         )?),
+        QueryMsg::UserCommitment { github_user_id } => Ok(to_json_binary(
+            &USER_COMMITMENTS.may_load(deps.storage, github_user_id)?,
+        )?),
+        QueryMsg::RepoCommitment { repo } => Ok(to_json_binary(
+            &REPO_COMMITMENTS.may_load(deps.storage, repo)?,
+        )?),
         QueryMsg::Repos {} => Ok(to_json_binary(
             &REPOS
                 .range(deps.storage, None, None, cosmwasm_std::Order::Ascending)
