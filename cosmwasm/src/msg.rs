@@ -3,7 +3,7 @@ use cosmwasm_std::{Addr, Binary};
 
 use crate::{
     models::{reclaim::Proof, reward::PrReward},
-    state::{Commitment, Repo, RepoConfig},
+    state::{Commitment, Config, Repo, RepoConfig},
 };
 
 #[cw_serde]
@@ -114,6 +114,8 @@ pub struct LinkRepoMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
+    #[returns(Config)]
+    Config,
     /// Returns the linked account of a github user, or [`None`] if the user has not yet been
     /// linked.
     #[returns(Option<Addr>)]

@@ -25,6 +25,7 @@ import {
   LinkRepoMsg,
   QueryMsg,
   MigrateMsg,
+  Config,
   NullableAddr,
   PrEligibility,
   NullableCommitmentForRepoConfig,

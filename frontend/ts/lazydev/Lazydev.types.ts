@@ -83,6 +83,7 @@ export interface LinkRepoMsg {
   secret: Binary;
 }
 export type QueryMsg =
+  | "config"
   | {
       linked_address: {
         github_user_id: number;
@@ -114,6 +115,11 @@ export type QueryMsg =
       };
     };
 export interface MigrateMsg {}
+export interface Config {
+  commitment_delay_max_height: number;
+  commitment_delay_min_height: number;
+  verifier_address: Addr;
+}
 export type NullableAddr = Addr | null;
 export type PrEligibility = "claimed" | "eligible" | "ineligible";
 export type NullableCommitmentForRepoConfig = CommitmentForRepoConfig | null;
