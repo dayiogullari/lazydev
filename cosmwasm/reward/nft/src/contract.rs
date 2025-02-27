@@ -14,8 +14,8 @@ use crate::{
     error::Error,
     msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg},
     state::{
-        ADMIN, ALLOWED_ORGS, ALLOWED_REPOS, CLAIMED_REWARDS, CW721_ADDR, LAST_NFT_ID, LAZYDEV_ADDR,
-        SYMBOL,
+        CollectionInfo, ADMIN, ALLOWED_ORGS, ALLOWED_REPOS, CLAIMED_REWARDS, COLLECTION_INFO,
+        CW721_ADDR, LAST_NFT_ID, LAZYDEV_ADDR,
     },
 };
 
@@ -46,8 +46,14 @@ pub fn instantiate(
     LAST_NFT_ID
         .save(deps.storage, &1)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-    SYMBOL
-        .save(deps.storage, &msg.config.symbol)
+
+    let collection_info = CollectionInfo {
+        symbol: msg.config.symbol.clone(),
+        collection_name: msg.config.collection_name.clone(),
+    };
+
+    COLLECTION_INFO
+        .save(deps.storage, &collection_info)
         .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
     let salt = Sha256::new()
@@ -108,13 +114,17 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
                     claimed: true,
                     rewards: vec![claimed_rewards],
                 },
-                None => QueryRewardsResponse {
-                    claimed: false,
-                    rewards: vec![PrReward::Nft {
-                        symbol: SYMBOL.load(deps.storage)?.to_string(),
-                        id: LAST_NFT_ID.load(deps.storage)?,
-                    }],
-                },
+                None => {
+                    let collection_info = COLLECTION_INFO.load(deps.storage)?;
+                    QueryRewardsResponse {
+                        claimed: false,
+                        rewards: vec![PrReward::Nft {
+                            symbol: collection_info.symbol.to_string(),
+                            id: LAST_NFT_ID.load(deps.storage)? + 1,
+                            collection_name: collection_info.collection_name.to_string(),
+                        }],
+                    }
+                }
             };
 
             Ok(to_json_binary(&response)?)
@@ -169,7 +179,8 @@ pub fn execute(
             LAST_NFT_ID
                 .save(deps.storage, &(nft_id + 1))
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
-            let symbol = SYMBOL
+
+            let collection_info = COLLECTION_INFO
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
@@ -177,17 +188,17 @@ pub fn execute(
                 .save(
                     deps.storage,
                     (pr_id, repo),
-                    &PrReward::Nft { symbol, id: nft_id },
+                    &PrReward::Nft {
+                        symbol: collection_info.symbol,
+                        id: nft_id,
+                        collection_name: collection_info.collection_name,
+                    },
                 )
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
             Ok(Response::new().add_submessage(SubMsg::new(
                 wasm_execute(
                     cw721_token_address,
-                    // &cw20::Cw20ExecuteMsg::Mint {
-                    // recipient: recipient_address.to_string(),
-                    // amount: reward_amount,
-                    // },
                     &crate::msg::cw721::ExecuteMsg::Mint {
                         token_id: nft_id.to_string(),
                         owner: recipient_address.to_string(),

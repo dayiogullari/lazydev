@@ -13,15 +13,15 @@ pub struct InstantiateMsg {
 
 #[cw_serde]
 pub struct Config {
-    /// The name of the cw20 token. This will be forwarded to the cw20-base instantiation.
+    /// The name of the cw721 collection. This will be forwarded to the cw721-base instantiation.
     pub collection_name: String,
-    /// The symbol of the cw20 token. This will be forwarded to the cw20-base instantiation.
+    /// The symbol of the cw721 collection. This will be forwarded to the cw721-base instantiation.
     pub symbol: String,
     /// The repos this contract will provide rewards for.
     pub valid_repos: Vec<Repo>,
     /// The orgs this contract will provide rewards for.
     pub valid_orgs: Vec<String>,
-    /// The code id of the cw20 base code to instantiate the token with.
+    /// The code id of the cw721 base code to instantiate the token with.
     pub cw721_base_code_id: u64,
 }
 

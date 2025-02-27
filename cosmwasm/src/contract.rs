@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    ensure, entry_point, to_json_binary, to_json_string, wasm_execute, Addr, Binary, Deps, DepsMut,
-    Env, Event, MessageInfo, Response, StdResult, SubMsg, WasmMsg,
+    ensure, to_json_binary, to_json_string, wasm_execute, Addr, Binary, Deps, DepsMut, Env, Event,
+    MessageInfo, Response, StdResult, SubMsg, WasmMsg,
 };
 use cw_storage_plus::{Map, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
@@ -25,7 +25,7 @@ use crate::{
 pub const SERIALIZATION_INFALLIBLE_MSG: &str = "serialization is infallible";
 pub const STORAGE_ACCESS_INFALLIBLE_MSG: &str = "storage access is infallible";
 
-#[cfg_attr(not(feature = "library"), entry_point)]
+#[cfg_attr(not(feature = "library"), cosmwasm_std::entry_point)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn instantiate(
     deps: DepsMut,

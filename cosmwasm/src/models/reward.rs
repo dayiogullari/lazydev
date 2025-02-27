@@ -10,8 +10,8 @@ pub enum PrReward {
         denom: String,
         amount: Uint128,
     },
-    // TODO: Add NFT reward type
     Nft {
+        collection_name: String,
         symbol: String,
         id: u64,
     },
