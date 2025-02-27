@@ -16,10 +16,7 @@ pub fn parse_github_api_repos_url(url: &str) -> Option<(&str, &str)> {
     let ("", tail) = url.split_once("https://api.github.com/repos/")? else {
         return None;
     };
-    let (org, tail) = tail.split_once('/')?;
-    let (repo, "") = tail.split_once('/')? else {
-        return None;
-    };
+    let (org, repo) = tail.split_once('/')?;
 
     Some((org, repo))
 }
