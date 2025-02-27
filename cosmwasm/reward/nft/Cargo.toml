@@ -1,0 +1,24 @@
+[package]
+name    = "lazydev-nft-reward"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cosmwasm-schema = { workspace = true }
+cosmwasm-std    = { workspace = true, features = ["cosmwasm_1_2"] }
+cw-storage-plus = { workspace = true }
+hex             = { workspace = true }
+serde           = { workspace = true }
+serde-json-wasm = { workspace = true }
+sha2            = { workspace = true }
+thiserror       = { workspace = true }
+
+cw20      = "2.0.0"
+cw20-base = "2.0.0"
+
+cw721      = "0.18.0"
+cw721-base = "0.18.0"
+lazydev   = { workspace = true }
