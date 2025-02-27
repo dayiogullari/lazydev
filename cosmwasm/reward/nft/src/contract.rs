@@ -1,7 +1,7 @@
 use cosmwasm_std::{
     ensure, entry_point, instantiate2_address, to_json_binary, wasm_execute, Binary, Checksum,
     CodeInfoResponse, Deps, DepsMut, Env, MessageInfo, QueryRequest, Response, StdResult, SubMsg,
-    Uint128, WasmMsg,
+    WasmMsg,
 };
 use lazydev::{
     contract::STORAGE_ACCESS_INFALLIBLE_MSG,
@@ -101,7 +101,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
             pr_id,
             user_id: _,
             recipient_address: _,
-            reward_config,
+            reward_config: _,
         }) => {
             let response = match CLAIMED_REWARDS.may_load(deps.storage, (pr_id, repo))? {
                 Some(claimed_rewards) => QueryRewardsResponse {
@@ -110,9 +110,9 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
                 },
                 None => QueryRewardsResponse {
                     claimed: false,
-                    rewards: vec![PrReward::Token {
-                        denom: SYMBOL.load(deps.storage)?.to_string(),
-                        amount: reward_config.parse()?,
+                    rewards: vec![PrReward::Nft {
+                        symbol: SYMBOL.load(deps.storage)?.to_string(),
+                        id: LAST_NFT_ID.load(deps.storage)?,
                     }],
                 },
             };
@@ -177,10 +177,7 @@ pub fn execute(
                 .save(
                     deps.storage,
                     (pr_id, repo),
-                    &PrReward::Nft {
-                        symbol,
-                        id: Uint128::new(nft_id.into()),
-                    },
+                    &PrReward::Nft { symbol, id: nft_id },
                 )
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 

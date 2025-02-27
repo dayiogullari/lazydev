@@ -1,6 +1,9 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Addr;
-use lazydev::msg::{QueryRewardsResponse, RewardMsg};
+use lazydev::{
+    msg::{QueryRewardsResponse, RewardMsg},
+    state::Repo,
+};
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -14,10 +17,10 @@ pub struct Config {
     pub collection_name: String,
     /// The symbol of the cw20 token. This will be forwarded to the cw20-base instantiation.
     pub symbol: String,
-    // / The repos this contract will provide rewards for.
-    // pub valid_repos: Vec<Repo>,
-    // / The orgs this contract will provide rewards for.
-    // pub valid_orgs: Vec<String>,
+    /// The repos this contract will provide rewards for.
+    pub valid_repos: Vec<Repo>,
+    /// The orgs this contract will provide rewards for.
+    pub valid_orgs: Vec<String>,
     /// The code id of the cw20 base code to instantiate the token with.
     pub cw721_base_code_id: u64,
 }
