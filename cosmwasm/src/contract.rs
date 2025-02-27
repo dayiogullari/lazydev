@@ -19,7 +19,7 @@ use crate::{
         Commitment, Config, Repo, CONFIG, EXISTING_PROOFS, REPOS, REPO_COMMITMENTS, REWARDED_PRS,
         USERS, USER_COMMITMENTS,
     },
-    utils::{parse_github_api_repos_contributors_url, parse_github_api_repos_url, sha256},
+    utils::{parse_github_api_pull_request_url, parse_github_api_repos_url, sha256},
 };
 
 pub const SERIALIZATION_INFALLIBLE_MSG: &str = "serialization is infallible";
@@ -194,17 +194,12 @@ fn link_repo(
 
     ensure!(
         admin_permissions_body.permissions.admin,
-        Error::InvalidUserPermission
+        Error::InsufficientPermissions
     );
 
-    // ensure!(
-    //     admin_permissions_body.user.id == admin_github_user_id,
-    //     Error::UserProofNotForRepoAdmin
-    // );
-
     let parameters = msg.repo_admin_permissions_proof.deserialize_parameters()?;
-    let (org, repo, _) = parse_github_api_repos_contributors_url(&parameters.url)
-        .ok_or(Error::InvalidCollaboratorUrl)?;
+    let (org, repo) =
+        parse_github_api_repos_url(&parameters.url).ok_or(Error::InvalidCollaboratorUrl)?;
 
     let commitment_key = sha256(msg.secret.as_slice());
 
@@ -303,7 +298,7 @@ fn reward_pr(deps: &mut DepsMut, msg: RewardPrMsg, config: &Config) -> Result<Re
 
     let url = msg.proof.deserialize_parameters()?.url;
 
-    let (org, repo, pr_id) = parse_github_api_repos_url(&url).ok_or(Error::InvalidPrUrl)?;
+    let (org, repo, pr_id) = parse_github_api_pull_request_url(&url).ok_or(Error::InvalidPrUrl)?;
 
     // sanity check
     assert_eq!(body.number, pr_id);

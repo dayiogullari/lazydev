@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
 
 #[must_use]
-pub fn parse_github_api_repos_url(url: &str) -> Option<(&str, &str, u64)> {
+pub fn parse_github_api_pull_request_url(url: &str) -> Option<(&str, &str, u64)> {
     let ("", tail) = url.split_once("https://api.github.com/repos/")? else {
         return None;
     };
@@ -12,17 +12,16 @@ pub fn parse_github_api_repos_url(url: &str) -> Option<(&str, &str, u64)> {
 }
 
 #[must_use]
-pub fn parse_github_api_repos_contributors_url(url: &str) -> Option<(&str, &str, &str)> {
+pub fn parse_github_api_repos_url(url: &str) -> Option<(&str, &str)> {
     let ("", tail) = url.split_once("https://api.github.com/repos/")? else {
         return None;
     };
     let (org, tail) = tail.split_once('/')?;
-    let (repo, tail) = tail.split_once("/collaborators/")?;
-    let (collaborator, "") = tail.split_once("/permission")? else {
+    let (repo, "") = tail.split_once('/')? else {
         return None;
     };
 
-    Some((org, repo, collaborator))
+    Some((org, repo))
 }
 
 /// Compute the sha256 hash of the provided bytes.
@@ -36,23 +35,22 @@ pub mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_github_api_repos_url() {
+    fn test_parse_github_api_pull_request_url() {
         let url = "https://api.github.com/repos/benluelo/test/pulls/1";
 
         assert_eq!(
-            parse_github_api_repos_url(url).unwrap(),
+            parse_github_api_pull_request_url(url).unwrap(),
             ("benluelo", "test", 1)
         );
     }
 
     #[test]
-    fn test_parse_github_api_repos_contributors_url() {
-        let url =
-            "https://api.github.com/repos/atahanyild/NEVO/collaborators/atahanyild/permission";
+    fn test_parse_github_api_repos_url() {
+        let url = "https://api.github.com/repos/atahanyild/NEVO";
 
         assert_eq!(
-            parse_github_api_repos_contributors_url(url).unwrap(),
-            ("atahanyild", "NEVO", "atahanyild")
+            parse_github_api_repos_url(url).unwrap(),
+            ("atahanyild", "NEVO")
         );
     }
 }

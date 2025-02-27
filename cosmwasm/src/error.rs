@@ -22,14 +22,10 @@ pub enum Error {
     InvalidCommitmentLength(usize),
     #[error("pr {0} has already been rewarded")]
     PrAlreadyRewarded(u64),
-    #[error("unable to verify proof: {0}")]
-    InvalidProof(String),
     #[error("unable to deserialize context: {0}")]
     InvalidContext(serde_json_wasm::de::Error),
     #[error("unable to deserialize extracted parameters: {0}")]
     InvalidExtractedParameters(serde_json_wasm::de::Error),
-    #[error("unable to deserialize parameters: {0}")]
-    InvalidParameters(serde_json_wasm::de::Error),
     #[error("invalid repo")]
     InvalidRepo,
     #[error("pr is not merged")]
@@ -41,9 +37,7 @@ pub enum Error {
     #[error("invalid commitment key")]
     InvalidCommitmentKey,
     #[error("user is not admin on the repo")]
-    InvalidUserPermission,
-    #[error("the user proof is not for the user provided in the permissions proof")]
-    UserProofNotForRepoAdmin,
+    InsufficientPermissions,
     #[error("invalid commitment")]
     InvalidCommitment,
 }
