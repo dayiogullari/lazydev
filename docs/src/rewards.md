@@ -1,8 +1,8 @@
 # Rewards
 
-**LazyDev_** supports fully-customizable reward schemes. Rewards for a repository are associated with pull request labels, with every label potentially providing multiple rewards.
+**LazyDev\_** supports fully-customizable reward schemes. Rewards for a repository are associated with pull request labels, with every label potentially providing multiple rewards.
 
-Rewards are distributed via CosmWasm contracts. When rewarding a pull request, the **LazyDev_** contract will read all configured rewards for the repository and call the associated contract with the following message:
+Rewards are distributed via CosmWasm contracts. When rewarding a pull request, the **LazyDev\_** contract will read all configured rewards for the repository and call the associated contract with the following message:
 
 ```rust
 /// The reward callback message for the reward contracts. This is expected to be
@@ -47,4 +47,3 @@ The callback includes an additional `reward_config` field, which is any addition
 ```
 
 This configures the label with id 12345 with one reward (100 tokens from `contract_a`), and the label with id 67890 with two rewards (50 tokens from `contract_a` and 10 tokens from `contract_b`). If a pull request were to have both of these labels, the user would receive 150 `contract_a` and 10 `contract_b`.
-

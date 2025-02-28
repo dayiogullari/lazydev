@@ -1,6 +1,6 @@
 [book]
-authors = ["benluelo", "atahanyild", "keyboord01"]
-language = "en"
+authors      = ["benluelo", "atahanyild", "keyboord01"]
+language     = "en"
 multilingual = false
-src = "src"
-title = "LazyDev_"
+src          = "src"
+title        = "LazyDev_"
