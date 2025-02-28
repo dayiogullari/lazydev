@@ -1,11 +1,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  FaGithub,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaCoins,
-} from "react-icons/fa";
+import { FaGithub, FaCheckCircle, FaTimesCircle, FaCoins } from "react-icons/fa";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Contribution } from "@/utils/github-contributions";
 
@@ -36,7 +31,7 @@ export function ContributionCard({
     if (isAlreadyClaimed) {
       window.open(
         `https://neutron.celat.one/pion-1/txs/${contribution.txHash || txHash}`,
-        "_blank"
+        "_blank",
       );
     } else if (!isLoading) {
       onClaim(contribution);

@@ -15,10 +15,7 @@ import AchievementsTab from "@/components/achievments-tab";
 import { ProfileTab } from "@/components/profile/profile-tab";
 import { Footer } from "@/components/ui/footer";
 import { ManageReposTab } from "@/components/manageRepos/manage-repos";
-import {
-  Contribution,
-  getGithubContributions,
-} from "@/utils/github-contributions";
+import { Contribution, getGithubContributions } from "@/utils/github-contributions";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -58,9 +55,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session?.user?.email]);
 
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
-    new Set([activeTab])
-  );
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set([activeTab]));
 
   useEffect(() => {
     setVisitedTabs((prev) => new Set([...prev, activeTab]));
@@ -78,7 +73,7 @@ export default function Home() {
         (updatedContribution) => {
           setContributions((currentContributions) => {
             const existingIndex = currentContributions.findIndex(
-              (c) => c.prUrl === updatedContribution.prUrl
+              (c) => c.prUrl === updatedContribution.prUrl,
             );
 
             if (existingIndex >= 0) {
@@ -89,7 +84,7 @@ export default function Home() {
               return [...currentContributions, updatedContribution];
             }
           });
-        }
+        },
       );
 
       console.log("contributions", contributions);
@@ -107,25 +102,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pt-12 text-slate-100 flex flex-col relative">
-      <NavBar
-        session={session}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
+      <NavBar session={session} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <div className="max-w-7xl mx-auto w-full px-4 mt-8">
-        <LazydevInteraction
-          rpcUrl={rpc_url}
-          contractAddress={contract_address}
-        />
+        <LazydevInteraction rpcUrl={rpc_url} contractAddress={contract_address} />
       </div>
 
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8">
         {Array.from(visitedTabs).map((tab) => (
-          <div
-            key={tab}
-            className={activeTab !== tab ? "hidden" : ""}
-          >
+          <div key={tab} className={activeTab !== tab ? "hidden" : ""}>
             <AnimatePresence mode="wait">
               {activeTab === tab && (
                 <motion.div
@@ -145,9 +130,7 @@ export default function Home() {
                     />
                   )}
 
-                  {tab === "leaderboard" && (
-                    <LeaderboardTab mockLeaderboard={mockLeaderboard} />
-                  )}
+                  {tab === "leaderboard" && <LeaderboardTab mockLeaderboard={mockLeaderboard} />}
 
                   {tab === "achievements" && <AchievementsTab />}
                   {tab === "challenges" && <ChallengesTab />}

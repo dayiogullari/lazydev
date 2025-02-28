@@ -54,8 +54,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userDropdownRef = useClickOutside(() => setIsDropdownOpen(false));
   const [isLoading, setIsLoading] = useState(false);
-  const { keplrWalletAddress, connectKeplrWallet, disconnectKeplrWallet } =
-    useKeplrWallet();
+  const { keplrWalletAddress, connectKeplrWallet, disconnectKeplrWallet } = useKeplrWallet();
 
   const ConnectGithub = async () => {
     setIsLoading(true);
@@ -91,9 +90,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
               <div
                 className="w-5 h-0.5 bg-emerald-400 mb-1 transform transition-transform duration-200 ease-in-out"
                 style={{
-                  transform: isMobileMenuOpen
-                    ? "rotate(45deg) translate(4px, 4px)"
-                    : "none",
+                  transform: isMobileMenuOpen ? "rotate(45deg) translate(4px, 4px)" : "none",
                 }}
               />
               <div
@@ -103,9 +100,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
               <div
                 className="w-5 h-0.5 bg-emerald-400 transform transition-transform duration-200 ease-in-out"
                 style={{
-                  transform: isMobileMenuOpen
-                    ? "rotate(-45deg) translate(4px, -4px)"
-                    : "none",
+                  transform: isMobileMenuOpen ? "rotate(-45deg) translate(4px, -4px)" : "none",
                 }}
               />
             </button>
@@ -122,9 +117,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                 >
                   <div
                     className={`absolute inset-0 rounded-md transition-colors duration-200 ${
-                      activeTab === tab.id
-                        ? "bg-emerald-500/10"
-                        : "group-hover:bg-emerald-500/5"
+                      activeTab === tab.id ? "bg-emerald-500/10" : "group-hover:bg-emerald-500/5"
                     }`}
                   />
 
@@ -174,19 +167,13 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span
-                    className={`${
-                      activeTab === tab.id
-                        ? "text-emerald-400"
-                        : "text-zinc-400"
-                    }`}
+                    className={`${activeTab === tab.id ? "text-emerald-400" : "text-zinc-400"}`}
                   >
                     {tab.icon}
                   </span>
                   <span
                     className={`text-sm font-medium ${
-                      activeTab === tab.id
-                        ? "text-emerald-400"
-                        : "text-zinc-400"
+                      activeTab === tab.id ? "text-emerald-400" : "text-zinc-400"
                     }`}
                   >
                     {tab.label}
@@ -224,10 +211,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                 </button>
               )}
 
-              <div
-                className="relative"
-                ref={userDropdownRef}
-              >
+              <div className="relative" ref={userDropdownRef}>
                 <motion.button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   whileTap={{ scale: 0.95 }}
@@ -244,9 +228,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                       />
                       <div
                         className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 ${
-                          keplrWalletAddress
-                            ? "bg-green-400"
-                            : "bg-amber-400 animate-pulse"
+                          keplrWalletAddress ? "bg-green-400" : "bg-amber-400 animate-pulse"
                         }`}
                       />
                     </div>
@@ -266,9 +248,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                         <div className="flex items-center gap-3">
                           <div className="relative">
                             <Image
-                              src={
-                                session.user?.image || "/placeholder-user.jpg"
-                              }
+                              src={session.user?.image || "/placeholder-user.jpg"}
                               alt="Profile"
                               width={36}
                               height={36}
@@ -276,9 +256,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                             />
                             <div
                               className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 ${
-                                keplrWalletAddress
-                                  ? "bg-green-400"
-                                  : "bg-amber-400 animate-pulse"
+                                keplrWalletAddress ? "bg-green-400" : "bg-amber-400 animate-pulse"
                               }`}
                             />
                           </div>
@@ -286,9 +264,7 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                             <p className="text-xs font-medium text-zinc-200">
                               {session.user?.name}
                             </p>
-                            <p className="text-xs text-zinc-400">
-                              {session.user?.email}
-                            </p>
+                            <p className="text-xs text-zinc-400">{session.user?.email}</p>
                           </div>
                         </div>
 
@@ -301,13 +277,11 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                         >
                           {keplrWalletAddress ? (
                             <>
-                              <CheckCircle className="w-3 h-3" /> Wallet
-                              Connected
+                              <CheckCircle className="w-3 h-3" /> Wallet Connected
                             </>
                           ) : (
                             <>
-                              <AlertCircle className="w-3 h-3" /> Wallet
-                              Connection Required
+                              <AlertCircle className="w-3 h-3" /> Wallet Connection Required
                             </>
                           )}
                         </div>

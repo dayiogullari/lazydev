@@ -31,9 +31,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
   const [repoConfigDiff, setRepoConfigDiff] = useState<boolean>(false);
   const [acceptConfigDiff, setAcceptConfigDiff] = useState<boolean>(false);
   const [isAlreadyLinked, setIsAlreadyLinked] = useState<boolean>(false);
-  const [oldCommitmentResult, setOldCommitmentResult] = useState<
-    RepoConfig | undefined
-  >(undefined);
+  const [oldCommitmentResult, setOldCommitmentResult] = useState<RepoConfig | undefined>(undefined);
 
   useEffect(() => {
     if (acceptConfigDiff) {
@@ -46,12 +44,8 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
 
   const handleAddConfig = () => {
     if (!selectedLabel || !selectedContract || !config) return;
-    const label = selectedRepo.labels.find(
-      (l) => l.id.toString() === selectedLabel
-    );
-    const contract = deployedContracts.find(
-      (c) => c.address === selectedContract
-    );
+    const label = selectedRepo.labels.find((l) => l.id.toString() === selectedLabel);
+    const contract = deployedContracts.find((c) => c.address === selectedContract);
     if (!label || !contract) return;
     const newConfig: ConfigItem = {
       labelId: label.id,
@@ -115,9 +109,9 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
               </h2>
               <div className="text-slate-300 mb-6">
                 <p className="mb-4">
-                  There are differences between your current configuration and
-                  the previously committed configuration. Using the committed
-                  configuration is required for linking.
+                  There are differences between your current configuration and the previously
+                  committed configuration. Using the committed configuration is required for
+                  linking.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -149,7 +143,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                             })),
                           },
                           null,
-                          2
+                          2,
                         )}
                       </pre>
                     </div>
@@ -159,9 +153,8 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                 <div className="p-4 bg-amber-400/10 border border-amber-400/20 rounded-lg mb-2">
                   <p className="text-amber-300 text-sm">
                     <strong>Note:</strong> Proceeding will use the{" "}
-                    <strong>committed configuration</strong> (green) instead of
-                    your current configuration. Your current configuration
-                    changes will not be applied.
+                    <strong>committed configuration</strong> (green) instead of your current
+                    configuration. Your current configuration changes will not be applied.
                   </p>
                 </div>
               </div>
@@ -206,16 +199,12 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
               View on GitHub
             </Link>
           </div>
-          <p className="text-slate-300">
-            {selectedRepo.description || "No description provided"}
-          </p>
+          <p className="text-slate-300">{selectedRepo.description || "No description provided"}</p>
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <FaTag className="text-emerald-400" />
-              <h2 className="text-xl font-semibold text-slate-100">
-                Configure Labels
-              </h2>
+              <h2 className="text-xl font-semibold text-slate-100">Configure Labels</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <select
@@ -225,10 +214,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
               >
                 <option value="">Select Label</option>
                 {selectedRepo.labels.map((label) => (
-                  <option
-                    key={label.id}
-                    value={label.id}
-                  >
+                  <option key={label.id} value={label.id}>
                     {label.name}
                   </option>
                 ))}
@@ -240,10 +226,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
               >
                 <option value="">Select Contract</option>
                 {deployedContracts.map((contract) => (
-                  <option
-                    key={contract.address}
-                    value={contract.address}
-                  >
+                  <option key={contract.address} value={contract.address}>
                     {contract.name} ({contract.symbol})
                   </option>
                 ))}
@@ -270,9 +253,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-semibold text-slate-100">
-                      Display Configuration
-                    </h2>
+                    <h2 className="text-xl font-semibold text-slate-100">Display Configuration</h2>
                     {isCommitted && (
                       <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-400/10 border border-green-400/20">
                         {isLinked || isAlreadyLinked ? (
@@ -282,16 +263,10 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                         )}
                         <span
                           className={`text-xs font-medium ${
-                            isLinked || isAlreadyLinked
-                              ? "text-green-400"
-                              : "text-orange-400"
+                            isLinked || isAlreadyLinked ? "text-green-400" : "text-orange-400"
                           }`}
                         >
-                          {isLinked
-                            ? "Linked"
-                            : isAlreadyLinked
-                            ? "Already Linked"
-                            : "Linking"}
+                          {isLinked ? "Linked" : isAlreadyLinked ? "Already Linked" : "Linking"}
                         </span>
                       </div>
                     )}
@@ -346,11 +321,9 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                     className="grid gap-3 w-full"
                   >
                     {configurations.map((config, index) => {
-                      const label = selectedRepo.labels.find(
-                        (l) => l.id === config.labelId
-                      );
+                      const label = selectedRepo.labels.find((l) => l.id === config.labelId);
                       const contract = deployedContracts.find(
-                        (c) => c.address === config.reward_contract
+                        (c) => c.address === config.reward_contract,
                       );
                       return (
                         <div
@@ -359,15 +332,11 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                         >
                           <div className="flex items-center gap-8 w-full">
                             <div className="px-3 py-1 ">
-                              <span className="text-xs font-mono text-green-400">
-                                CONFIG
-                              </span>
+                              <span className="text-xs font-mono text-green-400">CONFIG</span>
                             </div>
                             <div className="h-6 w-px bg-zinc-800/50" />
                             <div className="flex flex-col gap-1 min-w-[120px]">
-                              <span className="text-xs text-zinc-500 font-medium">
-                                LABEL
-                              </span>
+                              <span className="text-xs text-zinc-500 font-medium">LABEL</span>
                               <span className="text-sm font-mono">
                                 <span
                                   style={{ background: `#${label?.color}` }}
@@ -377,9 +346,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                               </span>
                             </div>
                             <div className="flex flex-col gap-1 min-w-[180px]">
-                              <span className="text-xs text-zinc-500 font-medium">
-                                CONTRACT
-                              </span>
+                              <span className="text-xs text-zinc-500 font-medium">CONTRACT</span>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-green-400 font-mono">
                                   {contract?.name || "UNKNOWN"}
@@ -424,25 +391,15 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
         </div>
       </motion.div>
       {committedConfigs.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-12 space-y-6"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-12 space-y-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="text-emerald-400" />
-            <h2 className="text-xl font-semibold text-slate-100">
-              Committed Configurations
-            </h2>
+            <h2 className="text-xl font-semibold text-slate-100">Committed Configurations</h2>
           </div>
 
           {committedConfigs.map((config, index) => {
-            const label = selectedRepo.labels.find(
-              (l) => l.id === config.labelId
-            );
-            const contract = deployedContracts.find(
-              (c) => c.address === config.reward_contract
-            );
+            const label = selectedRepo.labels.find((l) => l.id === config.labelId);
+            const contract = deployedContracts.find((c) => c.address === config.reward_contract);
 
             return (
               <div
@@ -456,9 +413,7 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
                       className="w-3 h-3 rounded-full"
                     />
                     <span className="font-medium">{label?.name}</span>
-                    <span className="text-sm text-emerald-400 font-mono">
-                      {contract?.name}
-                    </span>
+                    <span className="text-sm text-emerald-400 font-mono">{contract?.name}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <a

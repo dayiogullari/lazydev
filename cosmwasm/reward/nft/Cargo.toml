@@ -16,4 +16,4 @@ serde-json-wasm = { workspace = true }
 sha2            = { workspace = true }
 thiserror       = { workspace = true }
 
-lazydev   = { workspace = true, features = ["library"] }
+lazydev = { workspace = true, features = ["library"] }

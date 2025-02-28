@@ -4,13 +4,7 @@ import { useKeplrWallet } from "@/providers/kepler-context";
 import { claimReward } from "@/utils/claim-reward-helper";
 import { ContributionCard } from "../contribution/contribution-card";
 import { StatsCard } from "./stats-card";
-import {
-  GitPullRequest,
-  Loader2,
-  RefreshCw,
-  DollarSign,
-  CheckCircle,
-} from "lucide-react";
+import { GitPullRequest, Loader2, RefreshCw, DollarSign, CheckCircle } from "lucide-react";
 import DashboardWelcome from "./dashboard-welcome";
 import { Contribution } from "@/utils/github-contributions";
 
@@ -41,12 +35,11 @@ export function DashboardTab({
   const hasContributions = contributions.length > 0;
 
   const unclaimedContributions = contributions.filter(
-    (contribution) =>
-      !contribution.claimed && !claimedPrs.has(contribution.prUrl)
+    (contribution) => !contribution.claimed && !claimedPrs.has(contribution.prUrl),
   );
 
   const claimedContributions = contributions.filter(
-    (contribution) => contribution.claimed || claimedPrs.has(contribution.prUrl)
+    (contribution) => contribution.claimed || claimedPrs.has(contribution.prUrl),
   );
   console.log("claimedContributions", claimedContributions);
 
@@ -104,9 +97,7 @@ export function DashboardTab({
 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">
-            Available Contributions
-          </h2>
+          <h2 className="text-xl font-semibold text-white">Available Contributions</h2>
           <button
             onClick={fetchContributions}
             className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2"
@@ -149,9 +140,7 @@ export function DashboardTab({
                   <p className="text-zinc-400">Looking for contributions...</p>
                 </div>
               ) : (
-                <p className="text-zinc-400">
-                  All contributions have been claimed!
-                </p>
+                <p className="text-zinc-400">All contributions have been claimed!</p>
               )}
             </div>
           )}
@@ -162,9 +151,7 @@ export function DashboardTab({
         <div className="space-y-6 mt-10">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-xl font-semibold text-white">
-              Claimed Rewards
-            </h2>
+            <h2 className="text-xl font-semibold text-white">Claimed Rewards</h2>
           </div>
 
           <div className="space-y-4">

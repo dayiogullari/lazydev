@@ -37,9 +37,7 @@ export const ConfigurationButton = ({
       onClick={handleLinkRepo}
       disabled={!configurations.length || isLinked || isAlreadyLinked}
       className={`px-6 py-3 rounded-lg flex items-center gap-2 bg-[#09090B] text-[#c1c1c7] ${
-        !configurations.length || isLinked || isAlreadyLinked
-          ? " "
-          : "hover:bg-zinc-700"
+        !configurations.length || isLinked || isAlreadyLinked ? " " : "hover:bg-zinc-700"
       } border border-zinc-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       <FaRocket className="w-4 h-4" />
@@ -47,8 +45,8 @@ export const ConfigurationButton = ({
         {isLinked
           ? "Configuration Linked"
           : isAlreadyLinked
-          ? "Configuration Already Linked"
-          : "Confirm Configuration"}
+            ? "Configuration Already Linked"
+            : "Confirm Configuration"}
       </span>
     </button>
   );

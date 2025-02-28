@@ -208,7 +208,7 @@
             inherit
               lazydev
               lazydev-token-reward
-              lazydev-nft-reward              
+              lazydev-nft-reward
               schema
               ts-codegen
               ;
