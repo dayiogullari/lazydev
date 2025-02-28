@@ -61,6 +61,7 @@ export function DashboardTab({
       contractAddress,
       rpcUrl,
     });
+    fetchContributions();
   };
 
   if (loadingContributions && contributions.length === 0) {

@@ -91,7 +91,7 @@ export async function claimReward({
       [contribution.prUrl]: txResult.transactionHash,
     }));
 
-    setClaimedPrs((prev) => new Set([...prev, contribution.prUrl]));
+    // setClaimedPrs((prev) => new Set([...prev, contribution.prUrl]));
     toast.success("Reward claimed successfully!");
   } catch (error) {
     const errorMessage =
