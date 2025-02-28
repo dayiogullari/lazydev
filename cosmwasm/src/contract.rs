@@ -386,8 +386,8 @@ fn reward_pr(deps: &mut DepsMut, msg: RewardPrMsg, config: &Config) -> Result<Re
                 })
         }))
         .add_event(Event::new(event::PR_REWARD).add_attributes([
-            (event::attribute::ORG, repo.to_owned()),
-            (event::attribute::REPO, org.to_owned()),
+            (event::attribute::ORG, org.to_owned()),
+            (event::attribute::REPO, repo.to_owned()),
             (event::attribute::PR, pr_id.to_string()),
             (event::attribute::USER, body.user.id.to_string()),
             (event::attribute::RECIPIENT, recipient_address.to_string()),
