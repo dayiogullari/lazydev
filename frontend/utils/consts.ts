@@ -1,4 +1,4 @@
 export const contract_address =
-  "neutron1pvgk4jmn9h3xkywp7q0fr7eurzyn3mf6yu7gy8h9ay26t0sdqnhs7yt2s9";
+  "neutron1y09hku22dlkg8k8ymswc5jk7gpzt7hrvu9sd2v5tpkaj03w2fzhqq7rmfm";
 
 export const rpc_url = "https://rpc.pion.rs-testnet.polypore.xyz";
