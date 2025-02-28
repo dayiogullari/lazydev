@@ -136,6 +136,16 @@ pub fn execute(
         ExecuteMsg::LinkAccount(msg) => link_account(&mut deps, &env, msg, &config),
 
         ExecuteMsg::RewardPr(msg) => reward_pr(&mut deps, msg, &config),
+        ExecuteMsg::AdminResetAll => {
+            USERS.clear(deps.storage);
+            EXISTING_PROOFS.clear(deps.storage);
+            USER_COMMITMENTS.clear(deps.storage);
+            REPO_COMMITMENTS.clear(deps.storage);
+            REPOS.clear(deps.storage);
+            REWARDED_PRS.clear(deps.storage);
+
+            Ok(Response::default())
+        }
     }
 }
 

@@ -6,6 +6,7 @@ use lazydev::{
     contract::STORAGE_ACCESS_INFALLIBLE_MSG,
     models::reward::PrReward,
     msg::{QueryRewardsResponse, RewardMsg},
+    reward_event,
 };
 use sha2::{Digest, Sha256};
 
@@ -143,7 +144,7 @@ pub fn execute(
         ExecuteMsg::Reward(RewardMsg {
             repo,
             pr_id,
-            user_id: _,
+            user_id,
             recipient_address,
             // NOTE: Currently unused
             reward_config: _,
@@ -183,30 +184,35 @@ pub fn execute(
                 .load(deps.storage)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
+            let reward = PrReward::Nft {
+                symbol: collection_info.symbol,
+                id: nft_id,
+                collection_name: collection_info.collection_name,
+            };
             CLAIMED_REWARDS
-                .save(
-                    deps.storage,
-                    (pr_id, repo),
-                    &PrReward::Nft {
-                        symbol: collection_info.symbol,
-                        id: nft_id,
-                        collection_name: collection_info.collection_name,
-                    },
-                )
+                .save(deps.storage, (pr_id, repo.clone()), &reward)
                 .expect(STORAGE_ACCESS_INFALLIBLE_MSG);
 
-            Ok(Response::new().add_submessage(SubMsg::new(
-                wasm_execute(
-                    cw721_token_address,
-                    &crate::msg::cw721::ExecuteMsg::Mint {
-                        token_id: nft_id.to_string(),
-                        owner: recipient_address.to_string(),
-                        token_uri: None,
-                    },
-                    vec![],
-                )
-                .expect("works"),
-            )))
+            Ok(Response::new()
+                .add_submessage(SubMsg::new(
+                    wasm_execute(
+                        cw721_token_address,
+                        &crate::msg::cw721::ExecuteMsg::Mint {
+                            token_id: nft_id.to_string(),
+                            owner: recipient_address.to_string(),
+                            token_uri: None,
+                        },
+                        vec![],
+                    )
+                    .expect("works"),
+                ))
+                .add_event(reward_event(
+                    &reward,
+                    repo,
+                    pr_id,
+                    user_id,
+                    recipient_address.to_string(),
+                )))
         }
     }
 }

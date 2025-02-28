@@ -1,12 +1,13 @@
 use cosmwasm_std::{
-    ensure, entry_point, instantiate2_address, to_json_binary, to_json_string, wasm_execute,
-    Binary, Checksum, CodeInfoResponse, Deps, DepsMut, Env, Event, MessageInfo, QueryRequest,
-    Response, StdResult, SubMsg, Uint128, WasmMsg,
+    ensure, entry_point, instantiate2_address, to_json_binary, wasm_execute, Binary, Checksum,
+    CodeInfoResponse, Deps, DepsMut, Env, MessageInfo, QueryRequest, Response, StdResult, SubMsg,
+    Uint128, WasmMsg,
 };
 use lazydev::{
-    contract::{SERIALIZATION_INFALLIBLE_MSG, STORAGE_ACCESS_INFALLIBLE_MSG},
+    contract::STORAGE_ACCESS_INFALLIBLE_MSG,
     models::reward::PrReward,
     msg::{QueryRewardsResponse, RewardMsg},
+    reward_event,
 };
 use sha2::{Digest, Sha256};
 
@@ -185,19 +186,13 @@ pub fn execute(
                     )
                     .expect("works"),
                 ))
-                .add_event(
-                    Event::new("reward")
-                        .add_attribute(
-                            "reward",
-                            to_json_string(&reward).expect(SERIALIZATION_INFALLIBLE_MSG),
-                        )
-                        .add_attributes([
-                            ("org", repo.org),
-                            ("repo", repo.repo),
-                            ("pr", pr_id.to_string()),
-                            ("user", user_id.to_string()),
-                        ]),
-                ))
+                .add_event(reward_event(
+                    &reward,
+                    repo,
+                    pr_id,
+                    user_id,
+                    recipient_address.to_string(),
+                )))
         }
     }
 }
