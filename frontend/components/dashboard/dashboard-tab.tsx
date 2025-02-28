@@ -38,16 +38,13 @@ export function DashboardTab({
   const [claimedPrs, setClaimedPrs] = useState<Set<string>>(new Set());
   const [invalidRepos, setInvalidRepos] = useState<Set<string>>(new Set());
 
-  // Consider any contributions as "having contributions" - even if they're still loading
   const hasContributions = contributions.length > 0;
 
-  // Filter contributions that are not yet claimed and not in the process of being claimed
   const unclaimedContributions = contributions.filter(
     (contribution) =>
       !contribution.claimed && !claimedPrs.has(contribution.prUrl)
   );
 
-  // Filter contributions that are claimed or in the process of being claimed
   const claimedContributions = contributions.filter(
     (contribution) => contribution.claimed || claimedPrs.has(contribution.prUrl)
   );
@@ -66,7 +63,6 @@ export function DashboardTab({
     });
   };
 
-  // Show loading indicator only when initially loading and no contributions are showing yet
   if (loadingContributions && contributions.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -101,12 +97,10 @@ export function DashboardTab({
           title="Pull Requests"
           value={contributions.length}
           icon={<GitPullRequest className="w-6 h-6" />}
-          // trend="3 this week"
           trendUp={true}
         />
       </div>
 
-      {/* Unclaimed Contributions Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-white">
@@ -163,7 +157,6 @@ export function DashboardTab({
         </div>
       </div>
 
-      {/* Claimed Contributions Section */}
       {claimedContributions.length > 0 && (
         <div className="space-y-6 mt-10">
           <div className="flex items-center gap-2">

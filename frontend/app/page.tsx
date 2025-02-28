@@ -72,24 +72,20 @@ export default function Home() {
     setError(null);
     setContributions([]);
     try {
-      // Use the callback to progressively update the UI
       await getGithubContributions(
         session.user.githubUsername,
-        // setContributions,
+
         (updatedContribution) => {
           setContributions((currentContributions) => {
-            // Find if this contribution already exists in our state
             const existingIndex = currentContributions.findIndex(
               (c) => c.prUrl === updatedContribution.prUrl
             );
 
             if (existingIndex >= 0) {
-              // Update existing contribution
               const newContributions = [...currentContributions];
               newContributions[existingIndex] = updatedContribution;
               return newContributions;
             } else {
-              // Add new contribution
               return [...currentContributions, updatedContribution];
             }
           });

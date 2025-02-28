@@ -1,4 +1,4 @@
-import { FilteredRepos } from "./filtered-repos";
+import { filteredRepos } from "./filtered-repos";
 import { contract_address, rpc_url } from "./consts";
 import { toHex } from "@cosmjs/encoding";
 import { Comet38Client } from "@cosmjs/tendermint-rpc";
@@ -41,13 +41,19 @@ async function checkIfPrClaimed(
     const cometClient = await Comet38Client.connect(rpc_url);
 
     const response = await cometClient.txSearch({
-      query: `wasm-reward.org='${org}' AND wasm-reward.repo='${repo}' AND wasm-reward.pr=${prNumber}`,
+      query: `wasm-pr_reward._contract_address='${contract_address}' AND wasm-pr_reward.org='${org}' AND wasm-pr_reward.repo='${repo}' AND wasm-pr_reward.pr=${prNumber}`,
       order_by: "desc",
     });
+
+    console.log(
+      `wasm-pr_reward._contract_address='${contract_address}' AND wasm-pr_reward.org='${org}' AND wasm-pr_reward.repo='${repo}' AND wasm-pr_reward.pr=${prNumber}`
+    );
 
     if (!response) {
       throw new Error(`Blockchain query failed: ${response}`);
     }
+
+    console.log(response);
 
     if (response && response.totalCount > 0) {
       let allRewards: TokenRewardInfo[] = [];
@@ -107,20 +113,27 @@ export async function getGithubContributions(
   onProgressCallback?: (contribution: Contribution) => void
 ) {
   try {
-    const repos = await FilteredRepos(rpc_url, contract_address);
-    const repoQueryString = repos
-      .map(({ org, repo }) => `repo:${org}/${repo}`)
-      .join("+");
+    const repos = await filteredRepos(rpc_url, contract_address);
 
-    const response = await fetch(
-      `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`
-    );
+    let data;
+    if (repos.length !== 0) {
+      const repoQueryString = repos
+        .map(({ org, repo }) => `repo:${org}/${repo}`)
+        .join("+");
 
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      const response = await fetch(
+        `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`GitHub API error: ${response.status}`);
+      }
+
+      data = await response.json();
+    } else {
+      data = { items: [] };
     }
 
-    const data = await response.json();
     const contributions: Contribution[] = [];
 
     for (const item of data.items) {
@@ -151,7 +164,7 @@ export async function getGithubContributions(
 
         try {
           const claimStatus = await checkIfPrClaimed(org, repoId, prNumber);
-
+          console.log("ASDLAJSLDLAJKSJLKDAS", claimStatus);
           contributions[index] = {
             ...contributions[index],
             claimed: claimStatus.claimed,
