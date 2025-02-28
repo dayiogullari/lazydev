@@ -93,7 +93,7 @@ async function checkIfPrClaimed(
               allRewards[idx] = {
                 ...allRewards[idx],
                 rewardAmount:
-                  allRewards[idx].rewardAmount + reward_p.rewardAmount,
+                  Number(allRewards[idx].rewardAmount) + Number(reward_p.rewardAmount),
               };
             }
           } catch (error) {
