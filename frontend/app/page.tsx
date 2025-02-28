@@ -15,17 +15,10 @@ import AchievementsTab from "@/components/achievments-tab";
 import { ProfileTab } from "@/components/profile/profile-tab";
 import { Footer } from "@/components/ui/footer";
 import { ManageReposTab } from "@/components/manageRepos/manage-repos";
-import { getGithubContributions } from "@/utils/github-contributions";
-
-interface Contribution {
-  repo: string;
-  prUrl: string;
-  date: string;
-  description: string;
-  status?: string;
-  points?: number;
-  proof?: string;
-}
+import {
+  Contribution,
+  getGithubContributions,
+} from "@/utils/github-contributions";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -33,7 +26,7 @@ export default function Home() {
   const [loadingContributions, setLoadingContributions] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [totalCoins, setTotalCoins] = useState(0);
+
   const mockLeaderboard = [
     {
       rank: 1,
@@ -65,7 +58,9 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session?.user?.email]);
 
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set([activeTab]));
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
+    new Set([activeTab])
+  );
 
   useEffect(() => {
     setVisitedTabs((prev) => new Set([...prev, activeTab]));
@@ -75,12 +70,29 @@ export default function Home() {
     if (!session?.user?.githubUsername || !session?.accessToken) return;
     setLoadingContributions(true);
     setError(null);
-
+    setContributions([]);
     try {
-      const fetchedContributions = await getGithubContributions(session.user.githubUsername);
+      await getGithubContributions(
+        session.user.githubUsername,
 
-      setContributions(fetchedContributions);
-      setTotalCoins(123);
+        (updatedContribution) => {
+          setContributions((currentContributions) => {
+            const existingIndex = currentContributions.findIndex(
+              (c) => c.prUrl === updatedContribution.prUrl
+            );
+
+            if (existingIndex >= 0) {
+              const newContributions = [...currentContributions];
+              newContributions[existingIndex] = updatedContribution;
+              return newContributions;
+            } else {
+              return [...currentContributions, updatedContribution];
+            }
+          });
+        }
+      );
+
+      console.log("contributions", contributions);
 
       toast.success("Contributions loaded!");
     } catch (err: unknown) {
@@ -99,16 +111,21 @@ export default function Home() {
         session={session}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        totalCoins={totalCoins}
       />
 
       <div className="max-w-7xl mx-auto w-full px-4 mt-8">
-        <LazydevInteraction rpcUrl={rpc_url} contractAddress={contract_address} />
+        <LazydevInteraction
+          rpcUrl={rpc_url}
+          contractAddress={contract_address}
+        />
       </div>
 
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8">
         {Array.from(visitedTabs).map((tab) => (
-          <div key={tab} className={activeTab !== tab ? "hidden" : ""}>
+          <div
+            key={tab}
+            className={activeTab !== tab ? "hidden" : ""}
+          >
             <AnimatePresence mode="wait">
               {activeTab === tab && (
                 <motion.div
@@ -124,12 +141,13 @@ export default function Home() {
                       contributions={contributions}
                       loadingContributions={loadingContributions}
                       error={error}
-                      totalCoins={totalCoins}
                       fetchContributions={fetchContributions}
                     />
                   )}
 
-                  {tab === "leaderboard" && <LeaderboardTab mockLeaderboard={mockLeaderboard} />}
+                  {tab === "leaderboard" && (
+                    <LeaderboardTab mockLeaderboard={mockLeaderboard} />
+                  )}
 
                   {tab === "achievements" && <AchievementsTab />}
                   {tab === "challenges" && <ChallengesTab />}

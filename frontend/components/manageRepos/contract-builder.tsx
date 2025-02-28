@@ -150,7 +150,7 @@ const ContractBuilder = () => {
 
       const result = await signingClient.instantiate(
         keplrWalletAddress,
-        10893,
+        10961,
         instantiateMsg,
         "lazydev-token-minter",
         "auto"

@@ -8,8 +8,6 @@ import ReactJson from "react-json-view";
 import { ConfigurationButton } from "./config-button";
 import { repoHelpers } from "./helpers/handle-commit-link";
 import { ConfigItem, RepoDetailsProps } from "./helpers/types";
-import { useWindowSize } from "react-use";
-import Confetti from "react-confetti";
 import { RepoConfig } from "@/ts/lazydev/Lazydev.types";
 
 export const RepoDetails: React.FC<RepoDetailsProps> = ({
@@ -36,7 +34,6 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
   const [oldCommitmentResult, setOldCommitmentResult] = useState<
     RepoConfig | undefined
   >(undefined);
-  const { width, height } = useWindowSize();
 
   useEffect(() => {
     if (acceptConfigDiff) {
@@ -476,15 +473,6 @@ export const RepoDetails: React.FC<RepoDetailsProps> = ({
             );
           })}
         </motion.div>
-      )}
-
-      {isLinked && (
-        <Confetti
-          width={width}
-          height={height}
-          recycle={false}
-          numberOfPieces={200}
-        />
       )}
     </div>
   );

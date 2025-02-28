@@ -5,7 +5,7 @@ import { useClickOutside } from "@mantine/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
-import { FaGithub, FaCoins, FaSignOutAlt, FaWallet } from "react-icons/fa";
+import { FaGithub, FaSignOutAlt, FaWallet } from "react-icons/fa";
 import { Session } from "next-auth";
 import {
   Loader2,
@@ -14,20 +14,16 @@ import {
   Trophy,
   GitFork,
   LogOut,
-  ChevronDown,
-  DollarSign,
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
 import Logo from "@/asssets/logo";
 import { useKeplrWallet } from "@/providers/kepler-context";
-import { useTokenBalances, formatUsdValue, formatTokenAmount } from "@/utils/balance-fetch";
 
 interface Props {
   session: Session | null;
   activeTab: string;
   setActiveTab: Dispatch<SetStateAction<string>>;
-  totalCoins: number;
 }
 
 const tabs = [
@@ -56,20 +52,10 @@ const tabs = [
 export function NavBar({ session, activeTab, setActiveTab }: Props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isTokensDropdownOpen, setIsTokensDropdownOpen] = useState(false);
   const userDropdownRef = useClickOutside(() => setIsDropdownOpen(false));
-  const tokensDropdownRef = useClickOutside(() => setIsTokensDropdownOpen(false));
   const [isLoading, setIsLoading] = useState(false);
-  const { keplrWalletAddress, connectKeplrWallet, disconnectKeplrWallet } = useKeplrWallet();
-
-  const {
-    balances,
-    totalUsdValue,
-    totalChange24h,
-    isLoading: isLoadingTokens,
-    error: tokenError,
-    refreshBalances,
-  } = useTokenBalances(keplrWalletAddress, 30000);
+  const { keplrWalletAddress, connectKeplrWallet, disconnectKeplrWallet } =
+    useKeplrWallet();
 
   const ConnectGithub = async () => {
     setIsLoading(true);
@@ -79,8 +65,6 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
       console.error("GitHub authentication error:", error);
     }
   };
-
-  const isBothConnected = session && keplrWalletAddress;
 
   return (
     <header className="fixed w-full top-0 z-50">
@@ -107,7 +91,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
               <div
                 className="w-5 h-0.5 bg-emerald-400 mb-1 transform transition-transform duration-200 ease-in-out"
                 style={{
-                  transform: isMobileMenuOpen ? "rotate(45deg) translate(4px, 4px)" : "none",
+                  transform: isMobileMenuOpen
+                    ? "rotate(45deg) translate(4px, 4px)"
+                    : "none",
                 }}
               />
               <div
@@ -117,7 +103,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
               <div
                 className="w-5 h-0.5 bg-emerald-400 transform transition-transform duration-200 ease-in-out"
                 style={{
-                  transform: isMobileMenuOpen ? "rotate(-45deg) translate(4px, -4px)" : "none",
+                  transform: isMobileMenuOpen
+                    ? "rotate(-45deg) translate(4px, -4px)"
+                    : "none",
                 }}
               />
             </button>
@@ -134,7 +122,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                 >
                   <div
                     className={`absolute inset-0 rounded-md transition-colors duration-200 ${
-                      activeTab === tab.id ? "bg-emerald-500/10" : "group-hover:bg-emerald-500/5"
+                      activeTab === tab.id
+                        ? "bg-emerald-500/10"
+                        : "group-hover:bg-emerald-500/5"
                     }`}
                   />
 
@@ -184,13 +174,19 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span
-                    className={`${activeTab === tab.id ? "text-emerald-400" : "text-zinc-400"}`}
+                    className={`${
+                      activeTab === tab.id
+                        ? "text-emerald-400"
+                        : "text-zinc-400"
+                    }`}
                   >
                     {tab.icon}
                   </span>
                   <span
                     className={`text-sm font-medium ${
-                      activeTab === tab.id ? "text-emerald-400" : "text-zinc-400"
+                      activeTab === tab.id
+                        ? "text-emerald-400"
+                        : "text-zinc-400"
                     }`}
                   >
                     {tab.label}
@@ -204,127 +200,6 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
           {session ? (
             <>
-              {isBothConnected && (
-                <div className="relative" ref={tokensDropdownRef}>
-                  <motion.button
-                    onClick={() => setIsTokensDropdownOpen(!isTokensDropdownOpen)}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex items-center rounded-lg gap-1 sm:gap-2 relative z-10 border px-2 py-1.5 overflow-hidden border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800/40 transition-colors"
-                  >
-                    <DollarSign className="text-emerald-400 w-3.5 h-3.5" />
-                    {isLoadingTokens ? (
-                      <Loader2 className="text-emerald-400 w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <span className="font-medium text-emerald-400 text-xs sm:text-sm">
-                        {formatUsdValue(totalUsdValue)}
-                        {totalChange24h !== 0 && (
-                          <span
-                            className={`ml-1 text-xs ${
-                              totalChange24h > 0 ? "text-green-400" : "text-red-400"
-                            }`}
-                          >
-                            {totalChange24h > 0 ? "↑" : "↓"}
-                            {Math.abs(totalChange24h).toFixed(1)}%
-                          </span>
-                        )}
-                      </span>
-                    )}
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 text-emerald-400 transition-transform duration-200 ${
-                        isTokensDropdownOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </motion.button>
-
-                  <AnimatePresence>
-                    {isTokensDropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-2 w-56 md:w-64 origin-top-right rounded-lg bg-zinc-900 border border-zinc-800 shadow-xl overflow-hidden"
-                      >
-                        <div className="p-2 border-b border-zinc-800">
-                          <p className="text-xs text-zinc-400">Your Tokens</p>
-                        </div>
-
-                        <div className="max-h-56 md:max-h-64 overflow-y-auto">
-                          {isLoadingTokens ? (
-                            <div className="p-3 flex justify-center">
-                              <Loader2 className="animate-spin text-emerald-400" />
-                            </div>
-                          ) : tokenError ? (
-                            <div className="p-2 text-red-400 text-xs">{tokenError}</div>
-                          ) : (
-                            balances.map((token, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-2 hover:bg-zinc-800/50 transition-colors"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <FaCoins className="text-emerald-400 text-xs" />
-                                  <div>
-                                    <p className="text-xs font-medium text-zinc-200">
-                                      {token.symbol}
-                                    </p>
-                                    <p className="text-xs text-zinc-400">
-                                      {formatTokenAmount(token.amount, token.symbol)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-xs text-emerald-400">
-                                    {formatUsdValue(token.usdValue)}
-                                  </p>
-                                  {token.change24h !== undefined && (
-                                    <p
-                                      className={`text-xs ${
-                                        token.change24h > 0 ? "text-green-400" : "text-red-400"
-                                      }`}
-                                    >
-                                      {token.change24h > 0 ? "↑" : "↓"}
-                                      {Math.abs(token.change24h).toFixed(1)}%
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            ))
-                          )}
-                        </div>
-
-                        <div className="p-2 border-t border-zinc-800 bg-zinc-800/30">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-xs font-medium text-zinc-300">Total Value</p>
-                              {totalChange24h !== 0 && (
-                                <p
-                                  className={`text-xs ${
-                                    totalChange24h > 0 ? "text-green-400" : "text-red-400"
-                                  }`}
-                                >
-                                  24h: {totalChange24h > 0 ? "+" : ""}
-                                  {totalChange24h.toFixed(1)}%
-                                </p>
-                              )}
-                            </div>
-                            <p className="text-xs font-bold text-emerald-400">
-                              {formatUsdValue(totalUsdValue)}
-                            </p>
-                          </div>
-                          <button
-                            onClick={refreshBalances}
-                            className="mt-2 w-full text-xs text-emerald-400 hover:text-emerald-300 rounded-md border border-zinc-800 py-1 transition-colors"
-                          >
-                            Refresh Balances
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
-
               {keplrWalletAddress ? (
                 <div className="hidden sm:flex items-center rounded-lg gap-2 relative z-10 border px-2 lg:px-3 py-1.5 overflow-hidden border-zinc-800 bg-zinc-900/60">
                   <FaWallet className="text-emerald-400 w-3.5 h-3.5" />
@@ -349,7 +224,10 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                 </button>
               )}
 
-              <div className="relative" ref={userDropdownRef}>
+              <div
+                className="relative"
+                ref={userDropdownRef}
+              >
                 <motion.button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   whileTap={{ scale: 0.95 }}
@@ -366,7 +244,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                       />
                       <div
                         className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 ${
-                          keplrWalletAddress ? "bg-green-400" : "bg-amber-400 animate-pulse"
+                          keplrWalletAddress
+                            ? "bg-green-400"
+                            : "bg-amber-400 animate-pulse"
                         }`}
                       />
                     </div>
@@ -386,7 +266,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                         <div className="flex items-center gap-3">
                           <div className="relative">
                             <Image
-                              src={session.user?.image || "/placeholder-user.jpg"}
+                              src={
+                                session.user?.image || "/placeholder-user.jpg"
+                              }
                               alt="Profile"
                               width={36}
                               height={36}
@@ -394,7 +276,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                             />
                             <div
                               className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 ${
-                                keplrWalletAddress ? "bg-green-400" : "bg-amber-400 animate-pulse"
+                                keplrWalletAddress
+                                  ? "bg-green-400"
+                                  : "bg-amber-400 animate-pulse"
                               }`}
                             />
                           </div>
@@ -402,7 +286,9 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                             <p className="text-xs font-medium text-zinc-200">
                               {session.user?.name}
                             </p>
-                            <p className="text-xs text-zinc-400">{session.user?.email}</p>
+                            <p className="text-xs text-zinc-400">
+                              {session.user?.email}
+                            </p>
                           </div>
                         </div>
 
@@ -415,11 +301,13 @@ export function NavBar({ session, activeTab, setActiveTab }: Props) {
                         >
                           {keplrWalletAddress ? (
                             <>
-                              <CheckCircle className="w-3 h-3" /> Wallet Connected
+                              <CheckCircle className="w-3 h-3" /> Wallet
+                              Connected
                             </>
                           ) : (
                             <>
-                              <AlertCircle className="w-3 h-3" /> Wallet Connection Required
+                              <AlertCircle className="w-3 h-3" /> Wallet
+                              Connection Required
                             </>
                           )}
                         </div>
