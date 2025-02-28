@@ -23,6 +23,7 @@ export interface Contribution {
 }
 
 export type TokenRewardInfo = {
+  rewardAddress: string;
   rewardToken: string;
   rewardAmount: number;
 };
@@ -45,9 +46,9 @@ async function checkIfPrClaimed(
       order_by: "desc",
     });
 
-    console.log(
-      `wasm-pr_reward._contract_address='${contract_address}' AND wasm-pr_reward.org='${org}' AND wasm-pr_reward.repo='${repo}' AND wasm-pr_reward.pr=${prNumber}`
-    );
+    // console.log(
+    //   `wasm-pr_reward._contract_address='${contract_address}' AND wasm-pr_reward.org='${org}' AND wasm-pr_reward.repo='${repo}' AND wasm-pr_reward.pr=${prNumber}`
+    // );
 
     if (!response) {
       throw new Error(`Blockchain query failed: ${response}`);
@@ -78,10 +79,23 @@ async function checkIfPrClaimed(
               }
             );
             const reward_p = {
+              rewardAddress: rewardData.token.denom,
               rewardToken: tokenInfo.symbol,
               rewardAmount: rewardData.token.amount,
             };
-            allRewards = [...allRewards, reward_p];
+            const idx = allRewards.findIndex(
+              (reward) => reward.rewardAddress == reward_p.rewardAddress
+            );
+
+            if (idx < 0) {
+              allRewards = [...allRewards, reward_p];
+            } else {
+              allRewards[idx] = {
+                ...allRewards[idx],
+                rewardAmount:
+                  allRewards[idx].rewardAmount + reward_p.rewardAmount,
+              };
+            }
           } catch (error) {
             console.log(error);
             return { claimed: true, txHash: toHex(tx.hash) };

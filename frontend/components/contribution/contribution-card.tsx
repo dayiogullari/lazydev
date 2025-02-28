@@ -112,7 +112,7 @@ export function ContributionCard({
                   >
                     <FaCoins className="w-4 h-4" />
                     <span className="font-medium">
-                      {`${reward.rewardToken}-${reward.rewardAmount}`}
+                      {`${reward.rewardAmount} ${reward.rewardToken}`}
                     </span>
                   </div>
                 ))}
