@@ -14,6 +14,7 @@ pub mod utils;
 
 pub mod event {
     pub const REWARD: &str = "reward";
+    pub const PR_REWARD: &str = "pr_reward";
     pub mod attribute {
         pub const REWARD: &str = "reward";
         pub const ORG: &str = "org";

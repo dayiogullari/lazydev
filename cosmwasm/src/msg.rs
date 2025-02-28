@@ -28,9 +28,8 @@ pub enum ExecuteMsg {
 
     CommitRepo(CommitRepoMsg),
     LinkRepo(LinkRepoMsg),
-
-    /// Only for use in testing. Will be removed in production.
-    AdminResetAll,
+    // /// Only for use in testing. Will be removed in production.
+    // AdminResetAll,
 }
 
 /// Commit to linking an address with a proof in a future message.

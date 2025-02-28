@@ -7,6 +7,7 @@ use serde::{de::DeserializeOwned, Serialize};
 
 use crate::{
     error::Error,
+    event,
     models::{
         github::{PrBody, UserRepoBody},
         reclaim::{JsonExtractedParameters, Proof, UserExtractedParameters},
@@ -136,16 +137,16 @@ pub fn execute(
         ExecuteMsg::LinkAccount(msg) => link_account(&mut deps, &env, msg, &config),
 
         ExecuteMsg::RewardPr(msg) => reward_pr(&mut deps, msg, &config),
-        ExecuteMsg::AdminResetAll => {
-            USERS.clear(deps.storage);
-            EXISTING_PROOFS.clear(deps.storage);
-            USER_COMMITMENTS.clear(deps.storage);
-            REPO_COMMITMENTS.clear(deps.storage);
-            REPOS.clear(deps.storage);
-            REWARDED_PRS.clear(deps.storage);
+        // ExecuteMsg::AdminResetAll => {
+        //     USERS.clear(deps.storage);
+        //     EXISTING_PROOFS.clear(deps.storage);
+        //     USER_COMMITMENTS.clear(deps.storage);
+        //     REPO_COMMITMENTS.clear(deps.storage);
+        //     REPOS.clear(deps.storage);
+        //     REWARDED_PRS.clear(deps.storage);
 
-            Ok(Response::default())
-        }
+        //     Ok(Response::default())
+        // }
     }
 }
 
@@ -383,7 +384,14 @@ fn reward_pr(deps: &mut DepsMut, msg: RewardPrMsg, config: &Config) -> Result<Re
                         .expect(SERIALIZATION_INFALLIBLE_MSG),
                     )
                 })
-        })))
+        }))
+        .add_event(Event::new(event::PR_REWARD).add_attributes([
+            (event::attribute::ORG, repo.to_owned()),
+            (event::attribute::REPO, org.to_owned()),
+            (event::attribute::PR, pr_id.to_string()),
+            (event::attribute::USER, body.user.id.to_string()),
+            (event::attribute::RECIPIENT, recipient_address.to_string()),
+        ])))
 }
 
 #[must_use]
