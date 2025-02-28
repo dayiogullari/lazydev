@@ -31,7 +31,7 @@ export type TokenRewardInfo = {
 async function checkIfPrClaimed(
   org: string,
   repo: string,
-  prNumber: string,
+  prNumber: string
 ): Promise<{
   claimed: boolean;
   rewards?: TokenRewardInfo[];
@@ -60,24 +60,31 @@ async function checkIfPrClaimed(
       let allRewards: TokenRewardInfo[] = [];
       const tx = response.txs[0];
 
-      const rewardEvent = tx.result.events.filter((event) => event.type === "wasm-reward");
+      const rewardEvent = tx.result.events.filter(
+        (event) => event.type === "wasm-reward"
+      );
 
       for (const event of rewardEvent) {
-        const rewardAttr = event.attributes.find((attr) => attr.key === "reward");
+        const rewardAttr = event.attributes.find(
+          (attr) => attr.key === "reward"
+        );
 
         if (rewardAttr) {
           try {
             const rewardData = JSON.parse(rewardAttr.value);
-            const tokenInfo = await cosmWasmClient.queryContractSmart(rewardData.token.denom, {
-              token_info: {},
-            });
+            const tokenInfo = await cosmWasmClient.queryContractSmart(
+              rewardData.token.denom,
+              {
+                token_info: {},
+              }
+            );
             const reward_p = {
               rewardAddress: rewardData.token.denom,
               rewardToken: tokenInfo.symbol,
               rewardAmount: rewardData.token.amount,
             };
             const idx = allRewards.findIndex(
-              (reward) => reward.rewardAddress == reward_p.rewardAddress,
+              (reward) => reward.rewardAddress == reward_p.rewardAddress
             );
 
             if (idx < 0) {
@@ -85,7 +92,9 @@ async function checkIfPrClaimed(
             } else {
               allRewards[idx] = {
                 ...allRewards[idx],
-                rewardAmount: Number(allRewards[idx].rewardAmount) + Number(reward_p.rewardAmount),
+                rewardAmount:
+                  Number(allRewards[idx].rewardAmount) +
+                  Number(reward_p.rewardAmount),
               };
             }
           } catch (error) {
@@ -116,17 +125,19 @@ function extractPrNumber(url: string): string {
 
 export async function getGithubContributions(
   username: string,
-  onProgressCallback?: (contribution: Contribution) => void,
+  onProgressCallback?: (contribution: Contribution) => void
 ) {
   try {
     const repos = await filteredRepos(rpc_url, contract_address);
 
     let data;
     if (repos.length !== 0) {
-      const repoQueryString = repos.map(({ org, repo }) => `repo:${org}/${repo}`).join("+");
+      const repoQueryString = repos
+        .map(({ org, repo }) => `repo:${org}/${repo}`)
+        .join("+");
 
       const response = await fetch(
-        `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`,
+        `https://api.github.com/search/issues?q=author:${username}+is:pr+is:closed+${repoQueryString}`
       );
 
       if (!response.ok) {
@@ -181,7 +192,10 @@ export async function getGithubContributions(
             onProgressCallback(contributions[index]);
           }
         } catch (error) {
-          console.error(`Error checking claim status for PR ${prNumber}:`, error);
+          console.error(
+            `Error checking claim status for PR ${prNumber}:`,
+            error
+          );
           contributions[index] = {
             ...contributions[index],
             loading: false,
@@ -191,7 +205,7 @@ export async function getGithubContributions(
             onProgressCallback(contributions[index]);
           }
         }
-      },
+      }
     );
 
     await Promise.all(updatePromises);

@@ -36,7 +36,9 @@ export function LeaderboardTab({
       <div className="relative z-10 p-6">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-300">Leaderboard</h2>
+            <h2 className="text-lg font-semibold text-slate-300">
+              Leaderboard
+            </h2>
             <div className="flex gap-2">
               <span className="text-sm px-3 py-1.5 rounded-lg bg-zinc-600/50 text-slate-300 ring-1 ring-zinc-700/50">
                 Weekly Ranking
@@ -69,7 +71,9 @@ export function LeaderboardTab({
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                          isCurrentUser ? "bg-emerald-500 text-white" : "bg-zinc-700 text-slate-300"
+                          isCurrentUser
+                            ? "bg-emerald-500 text-white"
+                            : "bg-zinc-700 text-slate-300"
                         }`}
                       >
                         {entry.fullUsername[0].toUpperCase()}

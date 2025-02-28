@@ -34,7 +34,9 @@ export function StatsCard({ title, value, icon }: StatsCardProps) {
 
           <div>
             <h3 className="text-slate-400 text-sm font-medium">{title}</h3>
-            <p className="text-slate-300 text-2xl font-bold mt-1">{value ? value : "$0.00"}</p>
+            <p className="text-slate-300 text-2xl font-bold mt-1">
+              {value ? value : "$0.00"}
+            </p>
           </div>
         </div>
       </div>
