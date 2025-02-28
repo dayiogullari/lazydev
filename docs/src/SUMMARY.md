@@ -8,3 +8,4 @@
 - [Rewards](./rewards.md)
   - [Token](./rewards/token.md)
   - [NFT](./rewards/nft.md)
+- [Architecture](./architecture.md)
