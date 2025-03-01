@@ -59,8 +59,7 @@ pub struct CommitAccountMsg {
 
 /// Link a github user id with a recipient address with a zktls proof of the user's account.
 ///
-/// This is the second phase of the account linking (see [`CommitGithubUserId`] for more
-/// information).
+/// This is the second phase of the account linking (see [`CommitAccountMsg`] for more information).
 #[cw_serde]
 pub struct LinkAccountMsg {
     /// The address to be linked to the github user id.
@@ -69,7 +68,7 @@ pub struct LinkAccountMsg {
     ///
     /// This proof is of the <https://api.github.com/user> endpoint, called with an authenticated user. If the call to this endpoint is successfull, we can be sure that the submitter of this proof is indeed the account owner.
     pub proof: Proof,
-    /// The secret that was generated client side during the [`CommitGithubUserId`] step.
+    /// The secret that was generated client side during the [`CommitAccountMsg`] step.
     pub secret: Binary,
 }
 
