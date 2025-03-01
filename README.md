@@ -54,7 +54,7 @@ A secret is generated client side, and then the sha256 sum of this secret is com
 ## Useful Links
 
 - Reclaim verifier contract on neutron: <https://docs.reclaimprotocol.org/sdk/cosmos/neutron#copy-this-to-neutronfunctionsjs>
-- **LazyDev\_** contract address: <https://neutron.celat.one/pion-1/contracts/neutron1sltsd9zvh9up0vpqxjhu35ftjhuvv77u432722f2y3uk9kmnev6svfxejd>
+- **LazyDev\_** contract address: <https://neutron.celat.one/pion-1/contracts/neutron1x7977j9cz76g275e5ahx0t69yjagdfrptj28mf38xxn5nmky82mqah882h>
 - **LazyDev\_** Token Reward code id: <https://neutron.celat.one/pion-1/codes/10961>
 - `cw20-base` code id: <https://neutron.celat.one/pion-1/codes/10880>
 
